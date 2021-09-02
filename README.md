@@ -1,2 +1,2 @@
 # RodoscopingProject
-# Code to turn png files into greyScale images
+- Code to turn png files into greyScale images
