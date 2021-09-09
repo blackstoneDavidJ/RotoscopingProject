@@ -2,22 +2,14 @@ package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class WeightedMethod 
 {
-	public BufferedImage img;
-	
-	public WeightedMethod(String path)
+	public WeightedMethod()
 	{
-		ImageLoader loader = new ImageLoader(path);
-		img = loader.getImage();
 	}
-	
-	public void greyScale()
+
+	public BufferedImage greyScale(BufferedImage img)
 	{
 		int width = img.getWidth(null);
 		int height = img.getHeight(null);
@@ -37,18 +29,7 @@ public class WeightedMethod
 				img.setRGB(j, i, newColor.getRGB());
 			}
 		}
-			
-		File output = new File("resources/weighted_apples.png");
-		try 
-		{
-			ImageIO.write(img, "png", output);
-		} 
 		
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-			
-		System.out.println("Weighted Method done");
+		return img;
 	}
 }

@@ -2,22 +2,14 @@ package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class AverageMethod 
-{
-	private BufferedImage img;
-	
-	public AverageMethod(String path)
+{	
+	public AverageMethod()
 	{
-		ImageLoader loader = new ImageLoader(path);
-		img = loader.getImage();
 	}
 	
-	public void greyScale()
+	public BufferedImage greyScale(BufferedImage img)
 	{
 		int width = img.getWidth(null);
 		int height = img.getHeight(null);
@@ -36,19 +28,7 @@ public class AverageMethod
 				img.setRGB(j, i, newColor.getRGB());
 			}
 		}
-				
-		File output = new File("resources/Average_apples.png");
-		try 
-		{
-			ImageIO.write(img, "png", output);
-		} 
 		
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-				
-		System.out.println("Average method done");
+		return img;
 	}
 }
-
