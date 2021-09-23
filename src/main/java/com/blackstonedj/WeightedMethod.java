@@ -10,26 +10,30 @@ public class WeightedMethod
 	}
 
 	public BufferedImage greyScale(BufferedImage img)
-	{
-		int width = img.getWidth(null);
-		int height = img.getHeight(null);
-			
+	{			
 		//loop that gets a rgb pixel, gets the r, g, b values, due to wavelength each color requires a weight
 		//being .3 for r, .59 for g, .11 for b
-		for(int i = 0; i < height; i++) 
+		for(int i = 0; i < img.getWidth(); i++) 
 		{
-			for(int j = 0; j < width; j++)
+			for(int j = 0; j < img.getHeight(); j++)
 			{
-				Color c = new Color(img.getRGB(j, i));
-				int r = (int) (c.getRed() * 0.3);
-				int g = (int) (c.getGreen() * 0.59);
-				int b = (int) (c.getBlue() * 0.11);
-				int val = (r+g+b);
-				Color newColor = new Color(val,val,val);
-				img.setRGB(j, i, newColor.getRGB());
+				int val = getGreyPixel(img.getRGB(i, j));
+				Color color = new Color(val, val, val);
+				img.setRGB(i, j, color.getRGB());
 			}
 		}
 		
 		return img;
+	}
+	
+	private int getGreyPixel(int rgb) 
+	{
+        int r = (rgb >> 16) & 0xff;
+        int g = (rgb >> 8) & 0xff;
+        int b = (rgb) & 0xff;
+
+        int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+	
+        return gray;	
 	}
 }
