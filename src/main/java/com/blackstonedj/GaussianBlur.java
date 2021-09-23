@@ -16,6 +16,8 @@ public class GaussianBlur
 		this.radius = radius;
 	}
 	
+	//cjamge ,atrix 
+	//renormalize change matrix value, divide pixel value by sum of matrix
 	//gaussian filter
 	public BufferedImage gaussianFilter(double stDev)
 	{
@@ -54,9 +56,9 @@ public class GaussianBlur
 		
 		//for loop to access each pixel
 		BufferedImage answer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
-		for(int i = 0; i < img.getWidth() - radius; i++) 
+		for(int i = 0; i < img.getWidth(); i++) 
 		{
-			for(int j = 0; j < img.getHeight() - radius; j++)
+			for(int j = 0; j < img.getHeight(); j++)
 			{
 				double[][] distributedColorRed = new double[radius][radius];
 				double[][] distributedColorGreen = new double[radius][radius];
@@ -66,18 +68,37 @@ public class GaussianBlur
 				for(int x = 0; x < weights.length; x++) 
 				{
 					for(int y = 0; y < weights[x].length; y++)
-					{
-						try {
-							int sampleX = i + x - (weights.length / 2);
-							int sampleY = j + y - (weights.length / 2);
-							Color sampledColor = new Color(img.getRGB(sampleX, sampleY));
-							
-							distributedColorRed[x][y] = weights[x][y] * sampledColor.getRed();
-							distributedColorGreen[x][y] = weights[x][y] * sampledColor.getGreen();
-							distributedColorBlue[x][y] = weights[x][y] * sampledColor.getBlue();
-						} 
+					{	
+						int sampleX = i + x - (weights.length / 2);
+						int sampleY = j + y - (weights.length / 2);
 						
-						catch(Exception e) { /*System.out.println("out of bounds.");*/ }
+						if(sampleX > img.getWidth() - 1)
+						{
+							int errorOffset = sampleX - (img.getWidth() - 1);
+							sampleX = (img.getWidth() - 1) -  errorOffset;
+						}
+						
+						if(sampleY > img.getHeight() - 1)
+						{
+							int errorOffset = sampleY - (img.getHeight() - 1);
+							sampleY = (img.getHeight() - 1) -  errorOffset;
+						}
+						
+						if(sampleX < 0)
+						{
+							sampleX = Math.abs(sampleX);
+						}
+						
+						if(sampleY < 0)
+						{
+							sampleY = Math.abs(sampleY);
+						}					
+						
+						Color sampledColor = new Color(img.getRGB(sampleX, sampleY));
+							
+						distributedColorRed[x][y] = weights[x][y] * sampledColor.getRed();
+						distributedColorGreen[x][y] = weights[x][y] * sampledColor.getGreen();
+						distributedColorBlue[x][y] = weights[x][y] * sampledColor.getBlue();
 					}
 				}
 				
