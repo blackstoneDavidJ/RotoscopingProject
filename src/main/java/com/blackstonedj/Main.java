@@ -1,28 +1,21 @@
 package com.blackstonedj;
 
 import java.awt.image.BufferedImage;
-import java.util.Scanner;
 
 public class Main 
 {
 	public static void main(String[] args) 
 	{
 		//get image
-		String path = "resources/grey.png";
+		String path = "resources/blurtest.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
-		
-		//input for stDev and radius
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Please enter the stdDev for the image: ");
-		double stDev = scan.nextDouble();
-		int radius = 11;
-		
-		GaussianBlur blur = new GaussianBlur(img, radius);
 
-		//generate weightmatrix, use matrix on image
-		BufferedImage gaussianImg = blur.gaussianFilter(stDev);
-		modder.save(("grey-stdev-" +stDev +"-radius-" +radius), gaussianImg);
-		scan.close();
+		SobelFilter sob = new SobelFilter();
+		GreyScale wght = new GreyScale();
+		GaussianBlur blur = new GaussianBlur(img, 10);
+		//modder.save("engine_grey_scale", wght.greyScale(img));
+		modder.save("gausstest", blur.gaussianFilter(10));
+		//modder.save("pokemon_radius-10_stdev-10", blur.gaussianFilter(10));
 	}
 }

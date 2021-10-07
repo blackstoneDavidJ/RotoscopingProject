@@ -1,30 +1,23 @@
-package com.blackstonedj;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 //sobel edge detection
 public class SobelFilter 
 {
-	final static int MAX = 765;
-	final static int MIN = 0;
 	
 	public SobelFilter()
 	{		
 	}
 	
-	//sobel edge detection for the x/y axis
+	//sobel edge detection for the x axis
 	public BufferedImage edgeDetection(BufferedImage img)
-	{
-        
-		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
-        int max;
-
-        for (int i = 0; i < img.getWidth(); i++) 
+	{	
+        int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
+        int maxGradient = -1;
+      
+        for (int i = 1; i < img.getWidth() - 1; i++) 
         {
-            for (int j = 0; j < img.getHeight(); j++) 
+            for (int j = 1; j < img.getHeight() - 1; j++) 
             {
             	//get all 9 values
                 int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
@@ -39,29 +32,29 @@ public class SobelFilter
                 int val21 = convertPixelVal(img.getRGB(i + 1, j));
                 int val22 = convertPixelVal(img.getRGB(i + 1, j + 1));
                 
-                //apply the Gx/Gy kernel to pixel values
+                //apply the Gx kernel to pixel values
                 int gx =  ((1 * val00) + (2 * val01) + (1 * val02)) 
                         + ((0 * val10) + (0 * val11) + (0 * val12))                        
                         + ((-1 * val20) + (-2 * val21) + (-1 * val22));         
                 
-                int gy = ((1 * val00) + (0 * val01) + (-1 * val02)) 
-                        + ((2 * val10) + (0 * val11) + (-2 * val12))                        
-                        + ((1 * val20) + (0 * val21) + (-1 * val22)); 
-                
-                int g = (int) Math.sqrt((gx * gx) + (gy * gy));
-               
+                int g = (int) Math.sqrt((gx * gx));
+              
+                //find maxGradient
+                if(maxGradient < g) 
+                {
+                    maxGradient = g;
+                }
                 edgeVals[i][j] = g;
             }
         }
-             
+        
         //normalize the values - set values
-        max = getMax();
         for (int i = 1; i < img.getWidth() - 1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1 ; j++) 
+            for (int j = 1; j < img.getHeight() - 1; j++) 
             {
                 int edgeColor = edgeVals[i][j];
-                edgeColor = (int)(edgeColor * (255.0 / max));
+                edgeColor = (int)(edgeColor * (255.0 / maxGradient));
                 edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
                 img.setRGB(i, j, edgeColor);
             }
@@ -70,22 +63,8 @@ public class SobelFilter
         return img;
     }
 	
-	//gets max possible gradient
-	private int getMax()
-	{
-		int gX =  ((1 *  MAX) + (2 *  MAX) + (1 *  MAX)) 
-				+ ((0 *  MIN) + (0 *  MIN) + (0 *  MIN))                        
-				+ ((-1 * MIN) + (-2 * MIN) + (-1 * MIN));         
-         
-        int gY = ((1 *  MAX) + (0 * MIN) + (-1 * MIN)) 
-                + ((2 * MAX) + (0 * MIN) + (-2 * MIN))                        
-                + ((1 * MAX) + (0 * MIN) + (-1 * MIN)); 
-         
-         return (int) Math.sqrt((gX * gY) + (gY * gY));
-	}
-	
 	//converting getRBG val to a value we can use
-	private int convertPixelVal(int rgb) 
+	public int convertPixelVal(int rgb) 
 	{        
         return (int) (((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + ((rgb) & 0xff));
     }
