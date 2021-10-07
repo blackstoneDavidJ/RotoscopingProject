@@ -1,8 +1,5 @@
 package com.blackstonedj;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 //sobel edge detection
@@ -22,9 +19,9 @@ public class SobelFilter
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
         int max;
 
-        for (int i = 0; i < img.getWidth(); i++) 
+        for (int i = 1; i < img.getWidth() - 1; i++) 
         {
-            for (int j = 0; j < img.getHeight(); j++) 
+            for (int j = 1; j < img.getHeight() - 1; j++) 
             {
             	//get all 9 values
                 int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
@@ -56,9 +53,9 @@ public class SobelFilter
              
         //normalize the values - set values
         max = getMax();
-        for (int i = 1; i < img.getWidth() - 1; i++) 
+        for (int i = 0; i < img.getWidth(); i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1 ; j++) 
+            for (int j = 0; j < img.getHeight(); j++) 
             {
                 int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));

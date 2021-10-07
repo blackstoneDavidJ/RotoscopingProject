@@ -52,9 +52,9 @@ public class PrewittFilter
            
       //normalize the values - set values
       max = getMax();
-      for (int i = 1; i < img.getWidth() - 1; i++) 
+      for (int i = 0; i < img.getWidth(); i++) 
       {
-          for (int j = 1; j < img.getHeight() - 1; j++) 
+          for (int j = 0; j < img.getHeight(); j++) 
           {
               int edgeColor = edgeVals[i][j];
               edgeColor = (int)(edgeColor * (255.0 / max));
