@@ -7,15 +7,12 @@ public class Main
 	public static void main(String[] args) 
 	{
 		//get image
-		String path = "resources/blurtest.png";
+		String path = "resources/car.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
-
-		SobelFilter sob = new SobelFilter();
-		GreyScale wght = new GreyScale();
-		GaussianBlur blur = new GaussianBlur(img, 10);
-		//modder.save("engine_grey_scale", wght.greyScale(img));
-		modder.save("gausstest", blur.gaussianFilter(10));
-		//modder.save("pokemon_radius-10_stdev-10", blur.gaussianFilter(10));
+		
+		int radius = 5;
+		CannyEdge canny = new CannyEdge(new SobelFilter(), new GreyScale(), new GaussianBlur(radius));
+		modder.save("cannyImage_stddev_1", canny.edgeDetector(img, 1));
 	}
 }

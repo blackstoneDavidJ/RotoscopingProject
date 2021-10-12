@@ -3,9 +3,9 @@ package com.blackstonedj;
 import java.awt.image.BufferedImage;
 
 //sobel edge detection
-public class SobelFilter 
+public class SobelFilter implements EdgeDetector
 {
-	final static int MAX = 765;
+	final static int MAX = 1020;
 	final static int MIN = 0;
 	
 	public SobelFilter()
@@ -66,7 +66,7 @@ public class SobelFilter
         
         return img;
     }
-	
+	//1020
 	//gets max possible gradient
 	private int getMax()
 	{

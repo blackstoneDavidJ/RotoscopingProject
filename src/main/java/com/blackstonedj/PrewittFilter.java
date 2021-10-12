@@ -3,7 +3,7 @@ package com.blackstonedj;
 import java.awt.image.BufferedImage;
 
 //Prewitt edge detection
-public class PrewittFilter 
+public class PrewittFilter implements EdgeDetector
 {
 	final static int MAX = 765;
 	final static int MIN = 0;
