@@ -1,5 +1,6 @@
-package com.blackstonedj;
+package project;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 //sobel edge detection
@@ -17,6 +18,7 @@ public class SobelFilter implements EdgeDetector
 	{
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
+		int[][] edgeVals2 = new int[img.getWidth()][img.getHeight()];
         int max;
 
         for (int i = 1; i < img.getWidth() - 1; i++) 
@@ -37,17 +39,23 @@ public class SobelFilter implements EdgeDetector
                 int val22 = convertPixelVal(img.getRGB(i + 1, j + 1));
                 
                 //apply the Gx/Gy kernel to pixel values
-                int gx =  ((1 * val00) + (2 * val01) + (1 * val02)) 
+                int gEW =  ((1 * val00) + (2 * val01) + (1 * val02)) 
                         + ((0 * val10) + (0 * val11) + (0 * val12))                        
                         + ((-1 * val20) + (-2 * val21) + (-1 * val22));         
                 
-                int gy = ((1 * val00) + (0 * val01) + (-1 * val02)) 
+                int gNS = ((1 * val00) + (0 * val01) + (-1 * val02)) 
                         + ((2 * val10) + (0 * val11) + (-2 * val12))                        
                         + ((1 * val20) + (0 * val21) + (-1 * val22)); 
                 
-                int g = (int) Math.sqrt((gx * gx) + (gy * gy));
-               
+                int g45 = ((1 * val00) + (0 * val01) + (-1 * val02)) 
+                        + ((2 * val10) + (0 * val11) + (-2 * val12))                        
+                        + ((1 * val20) + (0 * val21) + (-1 * val22)); 
+                
+                int g = (int) Math.sqrt((gEW * gEW));
+                int g2 = (int) Math.sqrt((gNS * gNS));
+
                 edgeVals[i][j] = g;
+                edgeVals2[i][j] = g2;
             }
         }
              
@@ -57,10 +65,35 @@ public class SobelFilter implements EdgeDetector
         {
             for (int j = 0; j < img.getHeight(); j++) 
             {
-                int edgeColor = edgeVals[i][j];
-                edgeColor = (int)(edgeColor * (255.0 / max));
-                edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
-                img.setRGB(i, j, edgeColor);
+                int edgeColorX = edgeVals[i][j];
+                int edgeColorY = edgeVals2[i][j];
+                
+                edgeColorX = (int)(edgeColorX * (255.0 / max));
+                edgeColorY = (int)(edgeColorY * (255.0 / max));
+
+                if(edgeColorX > 10)
+                {
+                	edgeColorX = 0xff0000 | (edgeColorX << 16) | (edgeColorX << 8) | edgeColorX;
+                }
+                
+                else
+                {
+                    edgeColorX = 0xff000000 | (edgeColorX << 16) | (edgeColorX << 8) | edgeColorX;
+
+                }
+                
+                if(edgeColorY > 10)
+                {
+                	edgeColorY = 0xff0000 | (edgeColorY << 16) | (edgeColorY << 8) | edgeColorY;
+                }
+                
+                else
+                {
+                    edgeColorY = 0xff000000 | (edgeColorY << 16) | (edgeColorY << 8) | edgeColorY;
+
+                }
+                
+                img.setRGB(i, j, edgeColorX | edgeColorY);
             }
         }
         
