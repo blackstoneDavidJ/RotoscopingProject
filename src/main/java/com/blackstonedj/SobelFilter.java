@@ -1,4 +1,4 @@
-package project;
+package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -18,7 +18,8 @@ public class SobelFilter implements EdgeDetector
 	{
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
-		int[][] edgeVals2 = new int[img.getWidth()][img.getHeight()];
+		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
+
         int max;
 
         for (int i = 1; i < img.getWidth() - 1; i++) 
@@ -39,23 +40,19 @@ public class SobelFilter implements EdgeDetector
                 int val22 = convertPixelVal(img.getRGB(i + 1, j + 1));
                 
                 //apply the Gx/Gy kernel to pixel values
-                int gEW =  ((1 * val00) + (2 * val01) + (1 * val02)) 
-                        + ((0 * val10) + (0 * val11) + (0 * val12))                        
-                        + ((-1 * val20) + (-2 * val21) + (-1 * val22));         
+                int gx =  ((1 * val00) + (2 * val01) + (1 * val02)) 
+                        +  ((0 * val10) + (0 * val11) + (0 * val12))                        
+                        +  ((-1 * val20) + (-2 * val21) + (-1 * val22));         
                 
-                int gNS = ((1 * val00) + (0 * val01) + (-1 * val02)) 
+                int gy = ((1 * val00) + (0 * val01) + (-1 * val02)) 
                         + ((2 * val10) + (0 * val11) + (-2 * val12))                        
                         + ((1 * val20) + (0 * val21) + (-1 * val22)); 
-                
-                int g45 = ((1 * val00) + (0 * val01) + (-1 * val02)) 
-                        + ((2 * val10) + (0 * val11) + (-2 * val12))                        
-                        + ((1 * val20) + (0 * val21) + (-1 * val22)); 
-                
-                int g = (int) Math.sqrt((gEW * gEW));
-                int g2 = (int) Math.sqrt((gNS * gNS));
+
+                int g = (int) Math.sqrt((gx * gx) + (gy * gy));
+                double angle = Math.toDegrees(Math.atan2(gy, gx));
 
                 edgeVals[i][j] = g;
-                edgeVals2[i][j] = g2;
+                angleVals[i][j] = angle;
             }
         }
              
@@ -65,40 +62,46 @@ public class SobelFilter implements EdgeDetector
         {
             for (int j = 0; j < img.getHeight(); j++) 
             {
-                int edgeColorX = edgeVals[i][j];
-                int edgeColorY = edgeVals2[i][j];
-                
-                edgeColorX = (int)(edgeColorX * (255.0 / max));
-                edgeColorY = (int)(edgeColorY * (255.0 / max));
-
-                if(edgeColorX > 10)
+                int edgeColor = edgeVals[i][j];
+                edgeColor = (int)(edgeColor * (255.0 / max));
+                if(edgeColor > 10)
                 {
-                	edgeColorX = 0xff0000 | (edgeColorX << 16) | (edgeColorX << 8) | edgeColorX;
+                	edgeColor = getColor(angleVals[i][j]);
                 }
                 
-                else
-                {
-                    edgeColorX = 0xff000000 | (edgeColorX << 16) | (edgeColorX << 8) | edgeColorX;
-
-                }
-                
-                if(edgeColorY > 10)
-                {
-                	edgeColorY = 0xff0000 | (edgeColorY << 16) | (edgeColorY << 8) | edgeColorY;
-                }
-                
-                else
-                {
-                    edgeColorY = 0xff000000 | (edgeColorY << 16) | (edgeColorY << 8) | edgeColorY;
-
-                }
-                
-                img.setRGB(i, j, edgeColorX | edgeColorY);
+                img.setRGB(i, j, edgeColor);
             }
         }
         
         return img;
     }
+	
+	private int getColor(double angle)
+	{
+		int color = 0;
+		Color col;
+		
+		if(angle == 0 || angle == 180)
+		{
+			color = (int) new Color(255,0,0).getRGB();
+		}
+		
+		else if(angle == 90 || angle == -180 || angle ==-90)
+		{
+			color = (int) new Color(0,0,255).getRGB();
+		}
+	
+		else 
+		{
+			double temp = angle;
+			temp *= 382.5;
+			col = new Color((int)temp);
+			color = (int) col.getRGB();
+		}
+
+		return color;
+	}
+	
 	//1020
 	//gets max possible gradient
 	private int getMax()
