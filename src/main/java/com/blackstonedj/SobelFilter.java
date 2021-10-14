@@ -102,7 +102,6 @@ public class SobelFilter implements EdgeDetector
 		return color;
 	}
 	
-	//1020
 	//gets max possible gradient
 	private int getMax()
 	{
