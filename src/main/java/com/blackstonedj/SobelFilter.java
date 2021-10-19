@@ -14,8 +14,10 @@ public class SobelFilter implements EdgeDetector
 	}
 	
 	//sobel edge detection for the x/y axis
-	public BufferedImage edgeDetection(BufferedImage img)
+	public BufferedImage edgeDetection(BufferedImage img, EdgeDirection direction)
 	{
+		boolean useDirectional = false;
+        if(direction != null) useDirectional = true;
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
@@ -49,13 +51,16 @@ public class SobelFilter implements EdgeDetector
                         + ((1 * val20) + (0 * val21) + (-1 * val22)); 
 
                 int g = (int) Math.sqrt((gx * gx) + (gy * gy));
-                double angle = Math.toDegrees(Math.atan2(gy, gx));
+                
 
                 edgeVals[i][j] = g;
-                angleVals[i][j] = angle;
+                if(useDirectional)
+                {
+                	angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));
+                }
             }
         }
-             
+              
         //normalize the values - set values
         max = getMax();
         for (int i = 0; i < img.getWidth(); i++) 
@@ -64,9 +69,15 @@ public class SobelFilter implements EdgeDetector
             {
                 int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
-                if(edgeColor > 10)
+                if(useDirectional)
                 {
-                	edgeColor = getColor(angleVals[i][j]);
+                	
+                	edgeColor = direction.getColor(angleVals[i][j]);
+                }
+                
+                else 
+                {
+                	edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
                 }
                 
                 img.setRGB(i, j, edgeColor);
@@ -76,32 +87,7 @@ public class SobelFilter implements EdgeDetector
         return img;
     }
 	
-	private int getColor(double angle)
-	{
-		int color = 0;
-		Color col;
-		
-		if(angle == 0 || angle == 180)
-		{
-			color = (int) new Color(255,0,0).getRGB();
-		}
-		
-		else if(angle == 90 || angle == -180 || angle ==-90)
-		{
-			color = (int) new Color(0,0,255).getRGB();
-		}
-	
-		else 
-		{
-			double temp = angle;
-			temp *= 382.5;
-			col = new Color((int)temp);
-			color = (int) col.getRGB();
-		}
-
-		return color;
-	}
-	
+	//1020
 	//gets max possible gradient
 	private int getMax()
 	{

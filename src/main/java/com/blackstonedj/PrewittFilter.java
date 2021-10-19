@@ -14,8 +14,10 @@ public class PrewittFilter implements EdgeDetector
 	}
 	
 	//sobel edge detection for the x axis
-	public BufferedImage edgeDetection(BufferedImage img)
+	public BufferedImage edgeDetection(BufferedImage img, EdgeDirection direction)
 	{	
+		boolean useDirectional = false;
+        if(direction != null) useDirectional = true;
 		  int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		  double[][] angleVals = new double[img.getWidth()][img.getHeight()];
 	
@@ -48,10 +50,12 @@ public class PrewittFilter implements EdgeDetector
 	                      + ((1 * val20) + (0 * val21) + (-1 * val22)); 
 	              
 	              int g = (int) Math.sqrt((gx * gx) + (gy * gy));
-	              double angle = Math.toDegrees(Math.atan2(gy, gx));
 	
 	              edgeVals[i][j] = g;
-	              angleVals[i][j] = angle;
+	              if(useDirectional)
+	              {
+	            	  angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));
+	              }
 	          }
 	      }
            
@@ -63,17 +67,24 @@ public class PrewittFilter implements EdgeDetector
 	          {
 	        	  int edgeColor = edgeVals[i][j];
 	              edgeColor = (int)(edgeColor * (255.0 / max));
-	              if(edgeColor > 10)
-	              {
-	              edgeColor = getColor(angleVals[i][j]);
-	              }
+	              if(useDirectional)
+	                {
+	                	
+	                	edgeColor = direction.getColor(angleVals[i][j]);
+	                }
+	                
+	                else 
+	                {
+	                	edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
+	                }
 	              img.setRGB(i, j, edgeColor);
 	         }
 	     }
-	      
+      
 	     return img;
 	}
 	
+	//get the color based on pixel angle
 	private int getColor(double angle)
 	{
 		int color = 0;
@@ -89,7 +100,7 @@ public class PrewittFilter implements EdgeDetector
 			color = (int) new Color(0,0,255).getRGB();
 		}
 	
-		else 
+		else
 		{
 			double temp = angle;
 			temp *= 382.5;

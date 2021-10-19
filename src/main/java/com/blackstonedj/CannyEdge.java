@@ -20,6 +20,6 @@ public class CannyEdge
 	public BufferedImage edgeDetector(BufferedImage img, int stddev)
 	{
 		blur.setStddev(stddev);
-		return filter.edgeDetection(blur.gaussianFilter(grey.greyScale(img)));
+		return filter.edgeDetection(blur.gaussianFilter(grey.greyScale(img)),null);
 	}
 }
