@@ -17,7 +17,10 @@ public class SobelFilter implements EdgeDetector
 	public BufferedImage edgeDetection(BufferedImage img, EdgeDirection direction)
 	{
 		boolean useDirectional = false;
-        if(direction != null) useDirectional = true;
+        if(direction != null) 
+      	{
+        	useDirectional = true;
+        }
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
@@ -69,16 +72,17 @@ public class SobelFilter implements EdgeDetector
             {
                 int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
-                if(useDirectional)
+                if(useDirectional && edgeColor > 10 )
                 {
-                	
-                	edgeColor = direction.getColor(angleVals[i][j]);
+                	///double val = angleVals[i][j];
+                	//if( val > 0)System.out.println("angles: " +Math.floor(angleVals[i][j]));
+                	edgeColor = direction.getColor(angleVals[i][j], edgeColor);
                 }
                 
-                else 
+                /*else if(!useDirectional)
                 {
                 	edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
-                }
+                }*/
                 
                 img.setRGB(i, j, edgeColor);
             }
@@ -99,7 +103,11 @@ public class SobelFilter implements EdgeDetector
                 + ((2 * MAX) + (0 * MIN) + (-2 * MIN))                        
                 + ((1 * MAX) + (0 * MIN) + (-1 * MIN)); 
          
-         return (int) Math.sqrt((gX * gY) + (gY * gY));
+        
+        int swr = (int) Math.sqrt((gX * gY) + (gY * gY));
+        System.out.println(swr);
+        
+        return swr;
 	}
 	
 	//converting getRBG val to a value we can use
