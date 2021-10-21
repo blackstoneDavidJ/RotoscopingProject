@@ -1,4 +1,4 @@
-package project;
+package com.blackstonedj;
 
 import java.awt.Color;
 
@@ -9,11 +9,12 @@ public class SobelDirectional
 		
 	}
 	
-	public int getColor(double angleVal, int edgeVal, int largestEdge)
+	public int getColor(double angle, int edgeVal, int largestEdge)
 	{
 		int max = largestEdge;
 		Color color = null;
 		
+		int angleVal = (int) Math.floor(angle);
 		if(angleVal > 60 && angleVal < 120 ||
 				angleVal <= -60 && angleVal >= -120)
 		{

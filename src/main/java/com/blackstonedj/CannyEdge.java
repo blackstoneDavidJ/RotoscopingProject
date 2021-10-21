@@ -1,12 +1,12 @@
-package project;
+package com.blackstonedj;
 
 import java.awt.image.BufferedImage;
 
 public class CannyEdge 
 {
-	private EdgeDetector filter;
-	private GreyScale grey;
-	private GaussianBlur blur;
+	public EdgeDetector filter;
+	public GreyScale grey;
+	public GaussianBlur blur;
 	
 	//constructor taking in edge filter, greyscale filter, and gaussianblur kernel
 	public CannyEdge(EdgeDetector filter, GreyScale grey, GaussianBlur blur)
@@ -19,6 +19,6 @@ public class CannyEdge
 	//edge detection
 	public BufferedImage edgeDetector(BufferedImage img, int stddev)
 	{
-		return filter.edgeDetection(blur.gaussianFilter(grey.greyScale(img)), false);
+		return filter.edgeDetection(blur.gaussianFilter(grey.greyScale(img)),true);
 	}
 }
