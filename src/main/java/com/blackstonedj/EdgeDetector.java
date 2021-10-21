@@ -1,8 +1,8 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.image.BufferedImage;
 
 public interface EdgeDetector 
 {
-	public BufferedImage edgeDetection(BufferedImage img, EdgeDirection direction);
+	public BufferedImage edgeDetection(BufferedImage img, boolean direction);
 }

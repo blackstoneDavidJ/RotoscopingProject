@@ -1,4 +1,4 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -10,10 +10,10 @@ public class GaussianBlur
 	private int stddev;
 
 	//constructor takes an img and radius for kernal
-	public GaussianBlur(int radius)
+	public GaussianBlur(int radius, int stddev)
 	{
 		this.radius = radius;
-		this.stddev = 0;
+		this.stddev = stddev;
 	}
 	
 	//cjamge ,atrix 
@@ -22,11 +22,6 @@ public class GaussianBlur
 	public BufferedImage gaussianFilter(BufferedImage img)
 	{
 		return createGaussianImage(img, generateWeightMatrix(radius, stddev), radius);
-	}
-	
-	public void setStddev(int stddev)
-	{
-		this.stddev = stddev;
 	}
 	
 	//generates a weight matrix based given parameters

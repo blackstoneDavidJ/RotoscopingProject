@@ -1,6 +1,5 @@
-package com.blackstonedj;
+package project;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 //Prewitt edge detection
@@ -14,14 +13,18 @@ public class PrewittFilter implements EdgeDetector
 	}
 	
 	//sobel edge detection for the x axis
-	public BufferedImage edgeDetection(BufferedImage img, EdgeDirection direction)
+	public BufferedImage edgeDetection(BufferedImage img, boolean direction)
 	{	
+		int largestEdge = -1;
 		boolean useDirectional = false;
-        if(direction != null) useDirectional = true;
+		PrewittDirectional colorEdge = null;
+        if(direction == true) 
+        {
+        	useDirectional = true;
+        	colorEdge = new PrewittDirectional();
+        }
 		  int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		  double[][] angleVals = new double[img.getWidth()][img.getHeight()];
-	
-	      int max;
 	    
 	      for (int i = 1; i < img.getWidth() - 1; i++) 
 	      {
@@ -59,56 +62,50 @@ public class PrewittFilter implements EdgeDetector
 	          }
 	      }
            
-          //normalize the values - set values
-	      max = getMax();
-	      for (int i = 0; i < img.getWidth(); i++) 
-	      {
-	          for (int j = 0; j < img.getHeight(); j++) 
-	          {
-	        	  int edgeColor = edgeVals[i][j];
-	              edgeColor = (int)(edgeColor * (255.0 / max));
-	              if(useDirectional)
+	      int max = getMax();
+			if(useDirectional)
+	        {
+	        	largestEdge = largestEdge(edgeVals, img.getWidth(), img.getHeight(), max);
+	        }
+	        //normalize the values - set values
+	        for (int i = 0; i < img.getWidth(); i++) 
+	        {
+	            for (int j = 0; j < img.getHeight(); j++) 
+	            {
+					int edgeColor = edgeVals[i][j];
+	                edgeColor = (int)(edgeColor * (255.0 / max));
+	                
+	                if(useDirectional && edgeColor > 1)
 	                {
-	                	
-	                	edgeColor = direction.getColor(angleVals[i][j]);
+	                	edgeColor = colorEdge.getColor(angleVals[i][j], edgeColor, largestEdge);
 	                }
 	                
-	                else 
+	                else if(!useDirectional)
 	                {
 	                	edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
 	                }
-	              img.setRGB(i, j, edgeColor);
-	         }
-	     }
-      
-	     return img;
+	                
+	                img.setRGB(i, j, edgeColor);
+	            }
+	        }
+	        
+	        return img;
 	}
 	
-	//get the color based on pixel angle
-	private int getColor(double angle)
+	private int largestEdge(int[][] edgeVals, int width, int height, int max) 
 	{
-		int color = 0;
-		Color col;
+		int largest = -1;
+		for (int i = 0; i < width; i++) 
+        {
+            for (int j = 0; j < height; j++) 
+            {
+				int edgeColor = edgeVals[i][j];
+                edgeColor = (int)(edgeColor * (255.0 / max));
+                if(edgeColor > largest) largest = edgeColor;
+            }
+        }
 		
-		if(angle == 0 || angle == 180)
-		{
-			color = (int) new Color(255,0,0).getRGB();
-		}
-		
-		else if(angle == 90 || angle == -180 || angle ==-90)
-		{
-			color = (int) new Color(0,0,255).getRGB();
-		}
-	
-		else
-		{
-			double temp = angle;
-			temp *= 382.5;
-			col = new Color((int)temp);
-			color = (int) col.getRGB();
-		}
-
-		return color;
+		return largest;
 	}
 	
 	//gets max possible gradient

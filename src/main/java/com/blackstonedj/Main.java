@@ -1,4 +1,4 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.image.BufferedImage;
 
@@ -7,7 +7,7 @@ public class Main
 	public static void main(String[] args) 
 	{
 		//get image
-		String path = "resources/car.png";
+		String path = "resources/cartoon.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
 		/*
@@ -22,10 +22,8 @@ public class Main
 		modder.save("sobel_cartoon", new SobelFilter().edgeDetection(blur.gaussianFilter(grey.greyScale(img)),null));
 		*/
 		
-		GaussianBlur blur = new GaussianBlur(1);
-		blur.setStddev(1);
-		EdgeDirection edge = new SobelDirectional();
-		modder.save("color_sobel", new SobelFilter().edgeDetection(blur.gaussianFilter(img),edge));
+		GaussianBlur blur = new GaussianBlur(5, 5);
+		modder.save("color_sobel", new SobelFilter().edgeDetection(blur.gaussianFilter(img),true));
 
 	}
 }

@@ -1,37 +1,57 @@
-package com.blackstonedj;
+package project;
+
 
 import java.awt.Color;
 
-public class PrewittDirectional implements EdgeDirection 
+public class PrewittDirectional
 {
 	public PrewittDirectional()
-	{
-		
+	{	
 	}
 	
-	public int getColor(double angleVal)
+	public int getColor(double angleVal, int edgeVal, int largestEdge)
 	{
-		int color = 0;
-		Color col;
+		int max = largestEdge;
+		Color color = null;
 		
-		if(angleVal == 0 || angleVal == 180)
+		if(angleVal > 60 && angleVal < 120 ||
+				angleVal <= -60 && angleVal >= -120)
 		{
-			color = (int) new Color(255,0,0).getRGB();
-		}
-		
-		else if(angleVal == 90 || angleVal == -180 || angleVal ==-90)
-		{
-			color = (int) new Color(0,0,255).getRGB();
-		}
-	
-		else 
-		{
-			double temp = angleVal;
-			temp *= 382.5;
-			col = new Color((int)temp);
-			color = (int) col.getRGB();
-		}
+			int colorVal = ((255 * edgeVal) / max);
+			if(colorVal > 255) colorVal = 255;
 
-		return color;
-	}
+			color = new Color (colorVal,0,0);
+		}
+		
+		//blue
+		else if(angleVal >= 120 && angleVal <= 150 ||
+				angleVal <= -30 && angleVal >= -60) 
+		{
+			int colorVal = ((255 * edgeVal) / max);
+			if(colorVal > 255) colorVal = 255;
+
+			color = new Color (0,0,colorVal);
+		}
+		
+		//yellow
+		else if(angleVal >= 30 && angleVal <= 60 ||
+				angleVal <= -120 && angleVal >= -150)
+		{
+			int colorVal = ((255 * edgeVal) / max);
+			if(colorVal > 255) colorVal = 255;
+
+			color = new Color (colorVal,colorVal,0);
+		}
+		
+		//green
+		else if(angleVal <= 30 && angleVal >= -30 || 
+				angleVal >= 150 || angleVal <= -150 && angleVal >= -180)
+		{
+			int colorVal = ((255 * edgeVal) / max);
+			if(colorVal > 255) colorVal = 255;
+			color = new Color (0,colorVal,0);
+		}
+		
+		return color.getRGB();
+	}	
 }
