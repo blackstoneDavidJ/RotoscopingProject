@@ -4,5 +4,5 @@ import java.awt.image.BufferedImage;
 
 public interface EdgeDetector 
 {
-	public BufferedImage edgeDetection(BufferedImage img, boolean direction);
+	public BufferedImage edgeDetection(BufferedImage img, boolean direction, boolean magnitude);
 }

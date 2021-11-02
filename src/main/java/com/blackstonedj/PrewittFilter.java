@@ -13,7 +13,7 @@ public class PrewittFilter implements EdgeDetector
 	}
 	
 	//sobel edge detection for the x axis
-	public BufferedImage edgeDetection(BufferedImage img, boolean direction)
+	public BufferedImage edgeDetection(BufferedImage img, boolean direction, boolean magnitude)
 	{	
 		int largestEdge = -1;
 		boolean useDirectional = false;

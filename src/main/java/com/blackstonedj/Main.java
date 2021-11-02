@@ -7,7 +7,7 @@ public class Main
 	public static void main(String[] args) 
 	{
 		//get image
-		String path = "resources/input/blurtest.png";
+		String path = "resources/input/car2.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
 		/*
@@ -17,11 +17,17 @@ public class Main
 		*/
 		/*
 		GaussianBlur blur = new GaussianBlur(10);
-		blur.setStddev(1);
-		modder.save("sobel_cartoon", new SobelFilter().edgeDetection(blur.gaussianFilter(grey.greyScale(img)),null));
-		*/
-		GreyScale grey = new GreyScale();
+		blur.setStddev(1);*/
+		//modder.save("sobel_cartoon", new SobelFilter().edgeDetection(blur.gaussianFilter(grey.greyScale(img)),null));
+		
+		
+		//GreyScale grey = new GreyScale();
 		//img = grey.greyScale(img);
-		modder.save("sobel_blurtest_Direction", new SobelFilter().edgeDetection(img,true));
+		//modder.save("sobel", new SobelFilter().edgeDetection(img, false,true));
+		
+		Square sq = new Square(250);
+		modder.save("square", sq.makeSquare(500,500));
+		
+		//System.out.println(Math.toDegrees(Math.atan2(120,308)));
 	}
 }
