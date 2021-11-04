@@ -1,7 +1,9 @@
-package project;
+package com.blackstonedj;
 
 
 import java.awt.Color;
+
+import com.blackstonedj.SobelDirectional.Direction;
 
 public class PrewittDirectional
 {
@@ -9,13 +11,16 @@ public class PrewittDirectional
 	{	
 	}
 	
-	public int getColor(double angleVal, int edgeVal, int largestEdge)
+	public Color getColor(double angle, int edgeVal, int largestEdge)
 	{
 		int max = largestEdge;
-		Color color = null;
+		Color color = new Color(0,0,0);
+		double angleVal = angle;
 		
-		if(angleVal > 60 && angleVal < 120 ||
-				angleVal <= -60 && angleVal >= -120)
+		//red
+		
+		if(angleVal > 67.5  && angleVal < 112.5 ||
+				angleVal < -67.5 && angleVal > -112.5)
 		{
 			int colorVal = ((255 * edgeVal) / max);
 			if(colorVal > 255) colorVal = 255;
@@ -24,8 +29,8 @@ public class PrewittDirectional
 		}
 		
 		//blue
-		else if(angleVal >= 120 && angleVal <= 150 ||
-				angleVal <= -30 && angleVal >= -60) 
+		else if(angleVal >= 112.5 && angleVal <= 157.5 ||
+				angleVal <= -22.5 && angleVal >= -67.5) 
 		{
 			int colorVal = ((255 * edgeVal) / max);
 			if(colorVal > 255) colorVal = 255;
@@ -34,8 +39,8 @@ public class PrewittDirectional
 		}
 		
 		//yellow
-		else if(angleVal >= 30 && angleVal <= 60 ||
-				angleVal <= -120 && angleVal >= -150)
+		else if(angleVal <= 67.5 && angleVal >= 22.5 ||
+				angleVal <= -112.5 && angleVal >= -157.5)
 		{
 			int colorVal = ((255 * edgeVal) / max);
 			if(colorVal > 255) colorVal = 255;
@@ -44,14 +49,56 @@ public class PrewittDirectional
 		}
 		
 		//green
-		else if(angleVal <= 30 && angleVal >= -30 || 
-				angleVal >= 150 || angleVal <= -150 && angleVal >= -180)
+		else if(angleVal < 22.5 && angleVal > -22.5 || 
+				angleVal > 157.5 || angleVal < -157.5)
 		{
 			int colorVal = ((255 * edgeVal) / max);
 			if(colorVal > 255) colorVal = 255;
 			color = new Color (0,colorVal,0);
 		}
 		
-		return color.getRGB();
-	}	
+		return color;
+	}
+	
+	public Direction getDirection(double angle)
+	{
+		Direction dir = null;
+		double angleVal = angle;
+		if(angleVal > 67.5  && angleVal < 112.5 ||
+				angleVal < -67.5 && angleVal > -112.5)
+		{
+			dir = Direction.NS;
+		}
+		
+		//blue
+		else if(angleVal >= 112.5 && angleVal <= 157.5 ||
+				angleVal <= -22.5 && angleVal >= -67.5) 
+		{
+			dir = Direction.NESW;
+		}
+		
+		//yellow
+		else if(angleVal <= 67.5 && angleVal >= 22.5 ||
+				angleVal <= -112.5 && angleVal >= -157.5)
+		{
+			dir = Direction.NWSE;
+		}
+		
+		//green
+		else if(angleVal < 22.5 && angleVal > -22.5 || 
+				angleVal > 157.5 || angleVal < -157.5)
+		{
+			dir = Direction.EW;
+		}
+		
+		return dir;
+	}
+	
+	public enum Direction 
+	{
+		NS,
+		EW,
+		NESW,
+		NWSE
+	}
 }

@@ -1,9 +1,9 @@
-package project;
+package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import project.SobelDirectional.Direction;
+import com.blackstonedj.SobelDirectional.Direction;
 
 //sobel edge detection
 public class SobelFilter implements EdgeDetector
@@ -18,18 +18,14 @@ public class SobelFilter implements EdgeDetector
 	//sobel edge detection for the x/y axis
 	public BufferedImage edgeDetection(BufferedImage img, boolean direction, boolean magnitude)
 	{
-        int largestEdge = 0;
+        int largestEdge = -1;
         SobelDirectional colorEdge = null;
         Direction[][] dirVals = null;
         if(direction || magnitude) 
       	{
         	colorEdge = new SobelDirectional();
-        }
-        
-        if(magnitude || direction)
-        {
         	dirVals = new Direction[img.getWidth()][img.getHeight()];
-        }
+        }  
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
@@ -70,7 +66,8 @@ public class SobelFilter implements EdgeDetector
             }
         }
         
-        int max = getMax();
+        double max = getMax();
+        Color[][] colors = new Color[img.getWidth()][img.getHeight()];
 		if(direction || magnitude)
         {
         	largestEdge = largestEdge(edgeVals, img.getWidth(), img.getHeight(), max);
@@ -86,8 +83,8 @@ public class SobelFilter implements EdgeDetector
                 {
 	            	if(direction || magnitude) 
 	            	{
-	            		System.out.println(largestEdge);
 	                	Color color = colorEdge.getColor(angleVals[i][j], edgeColor, largestEdge);
+	                	colors[i][j] = color;
 	                	edgeColor = color.getRGB();
 	            		dirVals[i][j] = colorEdge.getDirection(angleVals[i][j]);
 	            	}
@@ -104,13 +101,13 @@ public class SobelFilter implements EdgeDetector
         
         if(magnitude)
         {
-        	img = edgeThinner(dirVals, edgeVals, img);
+        	img = edgeThinner(dirVals, edgeVals, colors, img, direction);
         }
         
         return img;
     }
 	
-	private BufferedImage edgeThinner(Direction[][] dir, int[][] edgeCmp, BufferedImage img) 
+	private BufferedImage edgeThinner(Direction[][] dir, int[][] edgeCmp, Color[][] colors, BufferedImage img, boolean direction) 
 	{
 		Direction dr = null;
 		int eg = 0;
@@ -129,7 +126,7 @@ public class SobelFilter implements EdgeDetector
 	    			 if(edge[i][j] < edge[i - 1][j] ||
 	    					 edge[i][j] < edge[i + 1][j])
 	    			 {
-	    				 edge[i][j] = 0;
+	    				 eg = 0;
 	    			 }
 	    		}
 	    		
@@ -164,16 +161,15 @@ public class SobelFilter implements EdgeDetector
             }
         }
 		
-		int max = getMax();
+		double max = getMax();
 		for (int i = 0; i < img.getWidth(); i++) 
         {
             for (int j = 0; j < img.getHeight(); j++) 
             {
-            	int edgeColor = edgeCmp[i][j];
-            	//System.out.println("after: " +edge[i][j] +"before: " +edgeCmp[i][j]);
-
+            	int edgeColor = edge[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
             	if(edgeColor == 0) edgeColor = new Color(0,0,0).getRGB();
+            	else if(direction && edgeColor > 0) edgeColor = colors[i][j].getRGB();
             	else
             	{
             		edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
@@ -186,7 +182,7 @@ public class SobelFilter implements EdgeDetector
 		return img;
 	}
 
-	private int largestEdge(int[][] edgeVals, int width, int height, int max) 
+	private int largestEdge(int[][] edgeVals, int width, int height, double max) 
 	{
 		int largest = -1;
 		for (int i = 0; i < width; i++) 
@@ -204,7 +200,7 @@ public class SobelFilter implements EdgeDetector
 
 	//1020
 	//gets max possible gradient
-	private int getMax()
+	private double getMax()
 	{
 		int gX =  ((1 *  MAX) + (2 *  MAX) + (1 *  MAX)) 
 				+ ((0 *  MIN) + (0 *  MIN) + (0 *  MIN))                        
@@ -214,7 +210,7 @@ public class SobelFilter implements EdgeDetector
                 + ((2 * MAX) + (0 * MIN) + (-2 * MIN))                        
                 + ((1 * MAX) + (0 * MIN) + (-1 * MIN)); 
          
-        return (int) Math.sqrt((gX * gY) + (gY * gY));
+        return Math.sqrt((gX * gY) + (gY * gY));
 	}
 	
 	//converting getRBG val to a value we can use
