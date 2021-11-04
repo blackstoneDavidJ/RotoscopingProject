@@ -1,4 +1,4 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.image.BufferedImage;
 

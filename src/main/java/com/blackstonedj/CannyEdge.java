@@ -1,4 +1,4 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.image.BufferedImage;
 
@@ -22,4 +22,3 @@ public class CannyEdge
 		return filter.edgeDetection(blur.gaussianFilter(grey.greyScale(img)),true, false);
 	}
 }
- 

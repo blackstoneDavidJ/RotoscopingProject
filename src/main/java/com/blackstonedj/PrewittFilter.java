@@ -1,4 +1,4 @@
-package com.blackstonedj;
+package project;
 
 import java.awt.image.BufferedImage;
 
@@ -18,11 +18,11 @@ public class PrewittFilter implements EdgeDetector
 		int largestEdge = -1;
 		boolean useDirectional = false;
 		PrewittDirectional colorEdge = null;
-        if(direction == true) 
-        {
-        	useDirectional = true;
-        	colorEdge = new PrewittDirectional();
-        }
+      if(direction == true) 
+      {
+      	useDirectional = true;
+      	colorEdge = new PrewittDirectional();
+      }
 		  int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		  double[][] angleVals = new double[img.getWidth()][img.getHeight()];
 	    
@@ -61,7 +61,7 @@ public class PrewittFilter implements EdgeDetector
 	              }
 	          }
 	      }
-           
+         
 	      int max = getMax();
 			if(useDirectional)
 	        {
@@ -96,14 +96,14 @@ public class PrewittFilter implements EdgeDetector
 	{
 		int largest = -1;
 		for (int i = 0; i < width; i++) 
-        {
-            for (int j = 0; j < height; j++) 
-            {
+      {
+          for (int j = 0; j < height; j++) 
+          {
 				int edgeColor = edgeVals[i][j];
-                edgeColor = (int)(edgeColor * (255.0 / max));
-                if(edgeColor > largest) largest = edgeColor;
-            }
-        }
+              edgeColor = (int)(edgeColor * (255.0 / max));
+              if(edgeColor > largest) largest = edgeColor;
+          }
+      }
 		
 		return largest;
 	}
@@ -114,17 +114,17 @@ public class PrewittFilter implements EdgeDetector
 		int gX =  ((1 * MAX) + (2 * MAX) + (1 * MAX)) 
 				+ ((0 * MIN) + (0 * MIN) + (0 * MIN))                        
 				+ ((-1 * MIN) + (-2 * MIN) + (-1 * MIN));         
-       
-      int gY = ((1 * MAX) + (0 * MIN) + (-1 * MIN)) 
-              + ((2 * MAX) + (0 * MIN) + (-2 * MIN))                        
-              + ((1 * MAX) + (0 * MIN) + (-1 * MIN)); 
-       
-       return (int) Math.sqrt((gX * gY) + (gY * gY));
+     
+    int gY = ((1 * MAX) + (0 * MIN) + (-1 * MIN)) 
+            + ((2 * MAX) + (0 * MIN) + (-2 * MIN))                        
+            + ((1 * MAX) + (0 * MIN) + (-1 * MIN)); 
+     
+     return (int) Math.sqrt((gX * gY) + (gY * gY));
 	}
 	
 	//converting getRBG val to a value we can use
 	private int convertPixelVal(int rgb) 
 	{        
-      return (int) (((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + ((rgb) & 0xff));
+    return (int) (((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + ((rgb) & 0xff));
 	}
 }
