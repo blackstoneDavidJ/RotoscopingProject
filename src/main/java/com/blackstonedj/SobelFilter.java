@@ -29,49 +29,62 @@ public class SobelFilter implements EdgeDetector
         
 		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
 		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
+		int gx = 0;
+		int gy = 0;
 		for (int i = 1; i < img.getWidth() - 1; i++) 
         {
             for (int j = 1; j < img.getHeight() - 1; j++) 
             {
-            	//get all 9 values
-                int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
-                int val01 = convertPixelVal(img.getRGB(i - 1, j));
-                int val02 = convertPixelVal(img.getRGB(i - 1, j + 1));
-
-                int val10 = convertPixelVal(img.getRGB(i, j - 1));
-                int val11 = convertPixelVal(img.getRGB(i, j));
-                int val12 = convertPixelVal(img.getRGB(i, j + 1));
-                
-                int val20 = convertPixelVal(img.getRGB(i + 1, j - 1));
-                int val21 = convertPixelVal(img.getRGB(i + 1, j));
-                int val22 = convertPixelVal(img.getRGB(i + 1, j + 1));
-                
-                //apply the Gx/Gy kernel to pixel values
-                int gx =  ((1 * val00) + (2 * val01) + (1 * val02)) 
-                        +  ((0 * val10) + (0 * val11) + (0 * val12))                        
-                        +  ((-1 * val20) + (-2 * val21) + (-1 * val22));         
-                
-                int gy = ((1 * val00) + (0 * val01) + (-1 * val02)) 
-                        + ((2 * val10) + (0 * val11) + (-2 * val12))                        
-                        + ((1 * val20) + (0 * val21) + (-1 * val22)); 
-
-                int g = (int) Math.sqrt((gx * gx) + (gy * gy));
-                
-               // if(gx > 0 && gy > 0) System.out.println("[" +gx +"," +gy +"]: ");
-                edgeVals[i][j] = g;
-                if(direction)
-                {
-                	angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));
-                }          
+	        	//get all 9 values
+	            int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
+	            int val01 = convertPixelVal(img.getRGB(i - 1, j));
+	            int val02 = convertPixelVal(img.getRGB(i - 1, j + 1));
+	
+	            int val10 = convertPixelVal(img.getRGB(i, j - 1));
+	            int val11 = convertPixelVal(img.getRGB(i, j));
+	            int val12 = convertPixelVal(img.getRGB(i, j + 1));
+	             
+	            int val20 = convertPixelVal(img.getRGB(i + 1, j - 1));
+	            int val21 = convertPixelVal(img.getRGB(i + 1, j));
+	            int val22 = convertPixelVal(img.getRGB(i + 1, j + 1));
+	             
+	             //apply the Gx/Gy kernel to pixel values
+	            gx =  ((1 * val00) + (2 * val01) + (1 * val02)) 
+	                     +  ((0 * val10) + (0 * val11) + (0 * val12))                        
+	                     +  ((-1 * val20) + (-2 * val21) + (-1 * val22));    
+	             
+	            gy = ((1 * val00) + (0 * val01) + (-1 * val02)) 
+	                     + ((2 * val10) + (0 * val11) + (-2 * val12))                        
+	                     + ((1 * val20) + (0 * val21) + (-1 * val22)); 
+	
+	            int g = (int) Math.sqrt((gx * gx) + (gy * gy));
+	         	
+	         	
+	             
+	            // if(gx > 0 && gy > 0) System.out.println("[" +gx +"," +gy +"]: ");
+	            edgeVals[i][j] = g;
+	            if(direction)
+	            {
+	             	angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));
+	             	if(angleVals[i][j] > 0) 
+	             	{
+	             		/*System.out.println("x:" +i +", y:"+j +" " +Math.floor(angleVals[i][j]) +" gx:"+gx+" gy:"+gy+" p:"+val11 +" g:"+g);
+	
+	             		System.out.println(val00 +" " +val01 +" " +val02 +" \n" +val10 +" " +val11 +" " +val12 +" \n" +
+	             			val20 +" " +val21 +" " +val22);
+	             		System.out.println(" ");*/
+	             	}
+	            } 
             }
         }
-        
+		        		
         double max = getMax();
         Color[][] colors = new Color[img.getWidth()][img.getHeight()];
 		if(direction || magnitude)
         {
         	largestEdge = largestEdge(edgeVals, img.getWidth(), img.getHeight(), max);
         }
+		
         //normalize the values - set values
         for (int i = 0; i < img.getWidth(); i++) 
         {
@@ -79,6 +92,7 @@ public class SobelFilter implements EdgeDetector
             {
 				int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
+                 
                 if(edgeColor > 0)
                 {
 	            	if(direction || magnitude) 
@@ -99,6 +113,9 @@ public class SobelFilter implements EdgeDetector
             }
         }
         
+    	//img = pixelChecker(angleVals);
+
+        
         if(magnitude)
         {
         	img = edgeThinner(dirVals, edgeVals, colors, img, direction);
@@ -107,6 +124,25 @@ public class SobelFilter implements EdgeDetector
         return img;
     }
 	
+	/*private double[][] pixelChecker(double[][] angleVals) 
+	{
+		for (int i = 1; i < width - 1; i++) 
+        {
+            for (int j = 1; j < height - 1; j++) 
+            {
+            	if(angleVals[i][j] > 0)
+            	{
+            		double angle = angleVals[i][j];
+            		if(angle)
+            	}
+            }
+        }
+		
+		return angleVals;
+	}*/
+
+
+
 	private BufferedImage edgeThinner(Direction[][] dir, int[][] edgeCmp, Color[][] colors, BufferedImage img, boolean direction) 
 	{
 		Direction dr = null;
@@ -214,8 +250,20 @@ public class SobelFilter implements EdgeDetector
 	}
 	
 	//converting getRBG val to a value we can use
-	private int convertPixelVal(int rgb) 
+	/*private int convertPixelVal(int rgb) 
 	{        
         return (int) (((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + ((rgb) & 0xff));
+    }*/
+	
+	public static int convertPixelVal(int rgb) {
+        int r = (rgb >> 16) & 0xff;
+        int g = (rgb >> 8) & 0xff;
+        int b = (rgb) & 0xff;
+
+        //from https://en.wikipedia.org/wiki/Grayscale, calculating luminance
+        int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        //int gray = (r + g + b) / 3;
+
+        return gray;
     }
 }

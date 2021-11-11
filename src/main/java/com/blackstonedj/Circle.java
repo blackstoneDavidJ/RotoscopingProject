@@ -25,12 +25,12 @@ public class Circle
 				if(val/4 <= radius)
 				{
 					System.out.println("i: " +i +", j: " +j);
-					circle.setRGB(i, j, new Color(0,0,0).getRGB());
+					circle.setRGB(i, j, new Color(255,255,255).getRGB());
 				}
 				
 				else
 				{
-					circle.setRGB(i, j, new Color(255,255,255).getRGB());
+					circle.setRGB(i, j, new Color(0,0,0).getRGB());
 				}
 			}
 		}
