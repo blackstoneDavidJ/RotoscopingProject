@@ -34,7 +34,7 @@ public class SobelFilter implements EdgeDetector
 		for (int i = 1; i < img.getWidth() - 1; i++) 
         {
             for (int j = 1; j < img.getHeight() - 1; j++) 
-            {
+            { 
 	        	//get all 9 values
 	            int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
 	            int val01 = convertPixelVal(img.getRGB(i - 1, j));
@@ -63,18 +63,7 @@ public class SobelFilter implements EdgeDetector
 	             
 	            // if(gx > 0 && gy > 0) System.out.println("[" +gx +"," +gy +"]: ");
 	            edgeVals[i][j] = g;
-	            if(direction)
-	            {
-	             	angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));
-	             	if(angleVals[i][j] > 0) 
-	             	{
-	             		/*System.out.println("x:" +i +", y:"+j +" " +Math.floor(angleVals[i][j]) +" gx:"+gx+" gy:"+gy+" p:"+val11 +" g:"+g);
-	
-	             		System.out.println(val00 +" " +val01 +" " +val02 +" \n" +val10 +" " +val11 +" " +val12 +" \n" +
-	             			val20 +" " +val21 +" " +val22);
-	             		System.out.println(" ");*/
-	             	}
-	            } 
+	            angleVals[i][j] = Math.toDegrees(Math.atan2(gy, gx));             	
             }
         }
 		        		
@@ -86,9 +75,9 @@ public class SobelFilter implements EdgeDetector
         }
 		
         //normalize the values - set values
-        for (int i = 0; i < img.getWidth(); i++) 
+        for (int i = 1; i < img.getWidth() - 1; i++) 
         {
-            for (int j = 0; j < img.getHeight(); j++) 
+            for (int j = 1; j < img.getHeight() - 1; j++) 
             {
 				int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
@@ -101,9 +90,10 @@ public class SobelFilter implements EdgeDetector
 	                	colors[i][j] = color;
 	                	edgeColor = color.getRGB();
 	            		dirVals[i][j] = colorEdge.getDirection(angleVals[i][j]);
+	            		//System.out.print(dirVals[i][j]);
 	            	}
 	            	
-	                else if(!direction)
+	                else if(!direction && !magnitude)
 	                {
 	                	edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
 	                }
@@ -113,9 +103,6 @@ public class SobelFilter implements EdgeDetector
             }
         }
         
-    	//img = pixelChecker(angleVals);
-
-        
         if(magnitude)
         {
         	img = edgeThinner(dirVals, edgeVals, colors, img, direction);
@@ -123,86 +110,31 @@ public class SobelFilter implements EdgeDetector
         
         return img;
     }
-	
-	/*private double[][] pixelChecker(double[][] angleVals) 
-	{
-		for (int i = 1; i < width - 1; i++) 
-        {
-            for (int j = 1; j < height - 1; j++) 
-            {
-            	if(angleVals[i][j] > 0)
-            	{
-            		double angle = angleVals[i][j];
-            		if(angle)
-            	}
-            }
-        }
-		
-		return angleVals;
-	}*/
-
-
 
 	private BufferedImage edgeThinner(Direction[][] dir, int[][] edgeCmp, Color[][] colors, BufferedImage img, boolean direction) 
 	{
-		Direction dr = null;
-		int eg = 0;
-		int[][] edge = edgeCmp;
+		int t = 0;
+		int passes = 0;
+		Direction[] dirArray = new Direction[] { Direction.NS, Direction.EW, Direction.NESW, Direction.NWSE };
+		int[][]edge = fillTmpArray(edgeCmp, img);
+		while(t < dirArray.length)
+		{
+			while(passes < 2)
+			{
+				edge = edgeThinnerHelper(dirArray[t], dir, edge, edgeCmp, img);
+				passes++;
+			}
+			passes = 0;
+			t++;
+		}
+		
+		edgeCmp = edge;
+		double max = getMax();
 		for (int i = 1; i < img.getWidth() - 1; i++) 
         {
             for (int j = 1; j < img.getHeight() - 1; j++) 
             {
-	        	dr = dir[i][j];
-	        	eg = edge[i][j];
-	        	//System.out.println("edge: " +edge[i][j]);
-	        
-        		//if(dr != Direction.EW) System.out.println("dir: " +dr);
-	    		if(dr == Direction.NS)
-	    		{
-	    			 if(edge[i][j] < edge[i - 1][j] ||
-	    					 edge[i][j] < edge[i + 1][j])
-	    			 {
-	    				 eg = 0;
-	    			 }
-	    		}
-	    		
-	    		if(dr == Direction.EW)
-	    		{
-	    			 if(edge[i][j] < edge[i][j - 1] || 
-	    					 edge[i][j] < edge[i][j + 1])
-	    			 {
-	    				 eg = 0;
-	    			 }
-	    		}
-	    		
-	    		else if(dr == Direction.NESW)
-	    		{
-	    			 if(edge[i][j] < edge[i - 1][j + 1] || 
-	    					 edge[i][j] < edge[i + 1][j - 1])
-	    			 {
-	    				 eg = 0;
-	    			 }
-	    		}
-	    		 
-	    		else if(dr == Direction.NWSE)
-	    		{
-	    			 if(edge[i][j] < edge[i - 1][j - 1] || 
-	    					 edge[i][j] < edge[i + 1][j+ 1])
-	    			 {
-	    				 eg = 0;
-	    			 }
-	    		}
-	    		
-	    		edge[i][j] = eg;
-            }
-        }
-		
-		double max = getMax();
-		for (int i = 0; i < img.getWidth(); i++) 
-        {
-            for (int j = 0; j < img.getHeight(); j++) 
-            {
-            	int edgeColor = edge[i][j];
+            	int edgeColor = edgeCmp[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
             	if(edgeColor == 0) edgeColor = new Color(0,0,0).getRGB();
             	else if(direction && edgeColor > 0) edgeColor = colors[i][j].getRGB();
@@ -216,6 +148,187 @@ public class SobelFilter implements EdgeDetector
         }
 		
 		return img;
+	}
+	
+	private int[][] edgeThinnerHelper(Direction currentDir, Direction[][] dir, int[][] edge, int[][] edgeCmp, BufferedImage img)
+	{
+		for (int i = 1; i < img.getWidth()-1; i++) 
+        {
+            for (int j = 1; j < img.getHeight()-1; j++) 
+            {     
+            	
+            	if(dir[i][j] == Direction.NS && dir[i][j] == currentDir)
+            	{
+            		
+            		if(i == 287 && j == 113) System.out.println("i: " +i +" j: " +j +" dir: " +dir[i][j] + " edge: " +edgeCmp[i][j] +" edge- i: " +(i) +" j: " +(j-1) +" " +edgeCmp[i][j-1]  +" edge+ j: " +(i) +" j: " +(j+1) +" "
+            				+edgeCmp[i][j+1]);
+            		if(dir[i][j-1] == Direction.NS && edgeCmp[i][j-1] > edgeCmp[i][j] ||
+            				dir[i][j+1] == Direction.NS && edgeCmp[i][j+1] > edgeCmp[i][j])
+            		{
+            			System.out.println("1");
+            			edge[i][j] = 0;
+            		}
+            		
+            		else if(dir[i][j-1] != Direction.NS && dir[i][j+1] != Direction.NS ||
+            				edgeCmp[i][j-1] == 0 && edgeCmp[i][j+1] == 0)
+            		{
+            			System.out.println("2");
+            			edge[i][j] = 0;
+            		}
+            		
+            		else if(edgeCmp[i][j-1] == edgeCmp[i][j])
+            		{
+            			System.out.println("3");
+
+            			edge[i][j+1] = 0;
+            		}
+            		
+            		else if(edgeCmp[i][j+1] == edgeCmp[i][j])
+            		{
+            			System.out.println("4");
+            			edge[i][j+1] = 0;
+            		}
+            		
+            		
+            		System.out.println(" edge: " +edge[i][j]);
+            	}
+            	
+            	
+            	else if(dir[i][j] == Direction.EW && dir[i][j] == currentDir)
+            	{
+            		if(i == 450 && j == 251) System.out.println("i: " +i +" j: " +j +" dir: " +dir[i][j] + " edge: " +edgeCmp[i][j] +" edge- i: " +(i-1) +" j: " +(j) +" " +edgeCmp[i-1][j]  +" edge+ j: " +(i+1) +" j: " +(j) +" "
+            				+edgeCmp[i+1][j]);
+            		if(dir[i-1][j] == Direction.EW && edgeCmp[i-1][j] > edgeCmp[i][j] ||
+            				dir[i+1][j] == Direction.EW && edgeCmp[i+1][j] > edgeCmp[i][j])
+            		{
+            			System.out.println("1");
+            			edge[i][j] = 0;
+            		}
+            		
+            		else if(dir[i-1][j] != Direction.EW && dir[i+1][j] != Direction.EW ||
+            				edgeCmp[i-1][j] == 0 && edgeCmp[i+1][j] == 0)
+            		{
+            			System.out.println("2");
+            			edge[i][j] = 0;
+            		}          		
+            		
+            		else if(edgeCmp[i-1][j] == edgeCmp[i][j])
+            		{
+            			System.out.println("3");
+
+            			edge[i+1][j] = 0;
+            		}
+            		
+            		else if(edgeCmp[i+1][j] == edgeCmp[i][j])
+            		{
+            			System.out.println("4");
+            			edge[i+1][j] = 0;
+            		}
+            		
+            		
+            		System.out.println(" edge: " +edge[i][j]);
+            	}
+            	
+            	else if(dir[i][j] == Direction.NESW && dir[i][j] == currentDir)
+            	{
+     
+            		
+            		if(i == 384 && j == 199) System.out.println("i: " +i +" j: " +j +" dir: " +dir[i][j] + " edge: " +edgeCmp[i][j] +" edge- i: " +(i-1) +" j: " +(j+1) +" " +edgeCmp[i-1][j+1]  +" edge+ i: " +(i+1) +" j: " +(j-1) +" "
+            				+edgeCmp[i+1][j-1]);
+            		if(/*dir[i-1][j+1] == Direction.NESW && */edgeCmp[i-1][j+1] > edgeCmp[i][j] ||
+            				/*dir[i+1][j-1] == Direction.NESW && */edgeCmp[i+1][j-1] > edgeCmp[i][j])
+            		{
+            			//System.out.println("1");
+            			edge[i][j] = 0;
+            		}
+            		
+            		else if(dir[i-1][j+1] != Direction.NESW && dir[i+1][j-1] != Direction.NESW &&
+            				edgeCmp[i-1][j+1] == 0 && edgeCmp[i+1][j-1] == 0)
+
+            		{
+            			System.out.println("2");
+            			edge[i][j] = 0;
+            		}
+            		
+            		
+            		else if(edgeCmp[i-1][j+1] == edgeCmp[i][j])
+            		{
+            			System.out.println("3");
+
+            			edge[i-1][j+1] = 0;
+            			
+            		}
+            		
+            		else if(edgeCmp[i+1][j-1] == edgeCmp[i][j])
+            		{
+            			System.out.println("4");
+            			edge[i+1][j-1] = 0;
+            		}
+            		
+            	
+            		//System.out.println(" edge: " +edge[i][j]);
+            	}
+
+            	if(dir[i][j] == Direction.NWSE && dir[i][j] == currentDir)
+            	{
+            		System.out.println("i: " +i +" j: " +j +" dir: " +dir[i][j] + " edge: " +edgeCmp[i][j] +" edge- i: " +(i-1) +" j: " +(j-1) +" " +edgeCmp[i-1][j-1]  +" edge+ j: " +(i+1) +" j: " +(j+1) +" "
+            				+edgeCmp[i+1][j+1]);
+            		if(/*dir[i-1][j-1] == Direction.NWSE && */edgeCmp[i-1][j-1] > edgeCmp[i][j] ||
+            				/*dir[i+1][j+1] == Direction.NWSE && */edgeCmp[i+1][j+1] > edgeCmp[i][j])
+            		{
+            			System.out.println("1");
+            			edge[i][j] = 0;
+            		}
+            		
+            		else if(dir[i-1][j-1] != Direction.NWSE && dir[i+1][j+1] != Direction.NWSE &&
+            				edgeCmp[i-1][j-1] == 0 && edgeCmp[i+1][j+1] == 0)
+            		{
+            			System.out.println("2");
+            			edge[i][j] = 0;
+            		}
+            		
+            		
+            		else if(edgeCmp[i-1][j-1] == edgeCmp[i][j])
+            		{
+            			System.out.println("3");
+
+            			edge[i-1][j-1] = 0;
+            		}
+            		
+            		else if(edgeCmp[i+1][j+1] == edgeCmp[i][j])
+            		{
+            			System.out.println("4");
+            			edge[i+1][j+1] = 0;
+            		}
+            		
+            		
+            		System.out.println(" edge: " +edge[i][j]);
+            	}
+            	
+            	/*//remove singels
+            	if(edge[i-1][j] == 0 && edge[i+1][j] == 0 && edge[i][j-1] == 0 && edge[i][j+1] == 0 && 
+            	   edge[i-1][j-1] == 0 && edge[i+1][j+1] == 0 && edge[i+1][j-1] == 0 && edge[i-1][j+1] == 0)
+            	{
+            		edge[i][j] = 0;
+            	}*/
+            }
+        }
+	
+		return edge;
+	}
+	
+	private int[][]  fillTmpArray(int[][]array, BufferedImage img)
+	{
+		int[][] arrayNew = new int[array.length][array.length];
+		for (int i = 0; i < img.getWidth(); i++) 
+        {
+            for (int j = 0; j < img.getHeight(); j++) 
+            {
+            	arrayNew[i][j] = array[i][j]; 
+            }
+        }
+		
+		return arrayNew;
 	}
 
 	private int largestEdge(int[][] edgeVals, int width, int height, double max) 

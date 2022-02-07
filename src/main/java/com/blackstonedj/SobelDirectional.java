@@ -99,6 +99,7 @@ public class SobelDirectional
 		NS,
 		EW,
 		NESW,
-		NWSE
+		NWSE,
+		NONE
 	}
 }
