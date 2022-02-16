@@ -6,15 +6,15 @@ public class Main
 {
 	public static void main(String[] args) 
 	{
-		String path = "resources/input/engine.png";
+		String path = "resources/input/car.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
 		GreyScale grey = new GreyScale();
-		img = grey.greyScale(img);
+		//img = grey.greyScale(img);
 		EdgeDetector edge = new SobelFilter();
-		GaussianBlur blur = new GaussianBlur(1,1);
-		//modder.save("circle5x5", new SobelFilter().edgeDetection(new GaussianBlur(5,5).gaussianFilter(img),true,true));
-		CannyEdge canny = new CannyEdge(edge, grey, blur, true, true);
-		modder.save("engine", canny.edgeDetector(img));
+		NewGaussianBlur blur = new NewGaussianBlur(1);
+		//modder.save("squarethinned_10std_41x41r", new SobelFilter().edgeDetection(blur.gaussianFilter(img), true,true));
+		CannyEdge canny = new CannyEdge(edge, grey, blur, true,true);
+		modder.save("car", canny.edgeDetector(img));
 	}
 }

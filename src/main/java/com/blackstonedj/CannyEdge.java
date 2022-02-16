@@ -6,12 +6,12 @@ public class CannyEdge
 {
 	public EdgeDetector filter;
 	public GreyScale grey;
-	public GaussianBlur blur;
+	public NewGaussianBlur blur;
 	public boolean direction = false;
 	public boolean thinned = false;
 	
 	//constructor taking in edge filter, greyscale filter, and gaussianblur kernel
-	public CannyEdge(EdgeDetector filter, GreyScale grey, GaussianBlur blur, boolean direction, boolean thinned)
+	public CannyEdge(EdgeDetector filter, GreyScale grey, NewGaussianBlur blur, boolean direction, boolean thinned)
 	{
 		this.filter = filter;
 		this.grey = grey;

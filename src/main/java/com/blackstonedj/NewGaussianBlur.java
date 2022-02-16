@@ -9,16 +9,20 @@ public class NewGaussianBlur
 	private double stddev;
 
 	//constructor takes an img and radius for kernal
-	public NewGaussianBlur(int radius, double stddev)
+	public NewGaussianBlur(double stddev)
 	{
-		this.radius = radius*2;
+		radius = (int) ((int) 4 * stddev);
+		if(radius % 2 == 0)
+		{
+			radius++;
+		}
 		this.stddev = stddev;
 	}
 	
 	public BufferedImage gaussianFilter(BufferedImage img)
 	{
 		double[][] weights = generateWeights(radius, stddev);
-		return gaussianBlur(gaussianBlur(gaussianBlur(img, weights, radius, stddev), weights, radius, stddev), weights, radius, stddev);
+		return gaussianBlur(img, weights, radius, stddev);
 	}
 
 	private BufferedImage gaussianBlur(BufferedImage img, double[][] weights, int radius, double stddev) 
@@ -108,7 +112,7 @@ public class NewGaussianBlur
 		{
 			for(int j = 0; j < weights[i].length; j++)
 			{
-				weights[i][j] = gaussianModel(i / 2, j / 2, stddev);
+				weights[i][j] = gaussianModel(i - radius / 2, j - radius / 2, stddev);
 				sum += weights[i][j];
 				
 			}
@@ -121,7 +125,9 @@ public class NewGaussianBlur
 			for(int j = 0; j < weights[i].length; j++)
 			{
 				weights[i][j] /= sum;
+				System.out.print(weights[i][j] +" ");
 			}
+			System.out.println('\n');
 		}
 		return weights;
 	}

@@ -56,7 +56,6 @@ public class SobelDirectional
 			if(colorVal > 255) colorVal = 255;
 			color = new Color (0,colorVal,0);
 		}
-		
 		return color;
 	}
 	
