@@ -10,6 +10,7 @@ public class PrewittFilter implements EdgeDetector
 {
 	final static int MAX = 765;
 	final static int MIN = 0;
+	private int[][] edgeVals = null;
 	
 	public PrewittFilter()
 	{		
@@ -27,7 +28,7 @@ public class PrewittFilter implements EdgeDetector
         	dirVals = new Direction[img.getWidth()][img.getHeight()];
 
         }
-		  int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
+		  edgeVals = new int[img.getWidth()][img.getHeight()];
 		  double[][] angleVals = new double[img.getWidth()][img.getHeight()];
 	    
 	      for (int i = 1; i < img.getWidth() - 1; i++) 
@@ -218,5 +219,10 @@ public class PrewittFilter implements EdgeDetector
 	private int convertPixelVal(int rgb) 
 	{        
       return (int) (((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + ((rgb) & 0xff));
+	}
+
+	public int[][] getEdgeVals() 
+	{
+		return edgeVals;
 	}
 }

@@ -10,6 +10,7 @@ public class SobelFilter implements EdgeDetector
 {
 	final static int MAX = 1020;
 	final static int MIN = 0;
+	private int[][] edge = null;
 	
 	public SobelFilter()
 	{		
@@ -106,12 +107,17 @@ public class SobelFilter implements EdgeDetector
         
         return img;
     }
+	
+	public int[][] getEdgeVals()
+	{
+		return edge;
+	}
 
 	private BufferedImage edgeThinner(Direction[][] dir, int[][] edgeCmp, Color[][] colors, BufferedImage img, boolean direction) 
 	{
 		int t = 0;
 		Direction[] dirArray = new Direction[] { Direction.NS, Direction.EW, Direction.NWSE, Direction.NESW };
-		int[][]edge = fillTmpArray(edgeCmp, img);  
+		edge = fillTmpArray(edgeCmp, img);  
 		
 		while(t < dirArray.length) 
 		{

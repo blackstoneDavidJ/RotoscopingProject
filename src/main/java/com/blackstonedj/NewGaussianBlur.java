@@ -118,7 +118,6 @@ public class NewGaussianBlur
 			}
 		}
 		
-		double sum2 = 0;
 		//divides weights by sum of weights
 		for(int i = 0; i < weights.length; i++) 
 		{
