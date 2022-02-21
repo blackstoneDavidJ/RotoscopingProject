@@ -50,7 +50,7 @@ public class ImageDrawer
 				double val = Math.pow(i - h,2) + Math.pow(j - k,2);
 				if(val/4 <= radius)
 				{
-					img.setRGB(i, j, new Color(220,220,220).getRGB());
+					img.setRGB(i, j, Color.LIGHT_GRAY.getRGB());
 				}
 				
 			}
@@ -67,7 +67,7 @@ public class ImageDrawer
 				double val = Math.pow(i - h2,2) + Math.pow(j - k2,2);
 				if(val/4 <= radius2)
 				{
-					img.setRGB(i, j, new Color(25,25,25).getRGB());
+					img.setRGB(i, j, Color.DARK_GRAY.getRGB());
 				}
 				
 			}
@@ -98,7 +98,7 @@ public class ImageDrawer
 				double val = Math.pow(i - h,2) + Math.pow(j - k,2);
 				if(val/4 <= radius)
 				{
-					img.setRGB(i, j, new Color(25,25,25).getRGB());
+					img.setRGB(i, j, Color.DARK_GRAY.getRGB());
 				}
 				
 			}
@@ -115,7 +115,7 @@ public class ImageDrawer
 				double val = Math.pow(i - h2,2) + Math.pow(j - k2,2);
 				if(val/4 <= radius2)
 				{
-					img.setRGB(i, j, new Color(210,210,210).getRGB());
+					img.setRGB(i, j, Color.LIGHT_GRAY.getRGB());
 				}
 				
 			}
@@ -142,7 +142,7 @@ public class ImageDrawer
 		{
 			for(int j=k;j<k+50;j++)
 			{
-				img.setRGB(i, j, new Color(25,25,25).getRGB());
+				img.setRGB(i, j, Color.DARK_GRAY.getRGB());
 			}
 		}
 		

@@ -18,26 +18,26 @@ public class DoubleThreshold
 		int[][] gradiants = edgeVals;
 		int largest = findLargest(img, gradiants);
 		Color[][] colors = new Color[img.getWidth()][img.getHeight()];
-		for (int i = 1; i < img.getWidth() - 1; i++) 
+		for (int i = 0; i < img.getWidth(); i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 0; j < img.getHeight(); j++) 
             { 
             	//upper
-            	if(gradiants[i][j] >= (largest * .60f))
+            	if(gradiants[i][j] >= (largest * upper))
             	{
-            		colors[i][j] = new Color(0,0,255);
+            		colors[i][j] = Color.BLUE;
             	}
             		
             	//lower
-            	else if(gradiants[i][j] >= (largest * .07f) && gradiants[i][j] < (largest * .60f))
+            	else if(gradiants[i][j] >= (largest * lower) && gradiants[i][j] < (largest * upper))
             	{
-            		colors[i][j] = new Color(255,0,0);
+            		colors[i][j] = Color.RED;
             	}
             	//remove
-            	else if(gradiants[i][j] < (largest * .7f))
+            	else if(gradiants[i][j] < (largest * lower))
             	{
             		gradiants[i][j] = 0;
-            		colors[i][j] = new Color(0,0,0);
+            		colors[i][j] = Color.BLACK;
             	}
             	
             	img.setRGB(i, j, colors[i][j].getRGB());
@@ -48,11 +48,11 @@ public class DoubleThreshold
 	}
 	
 	private int findLargest(BufferedImage img, int[][] gradiants) 
-	{
+	{             
 		int largest = 0;
-		for (int i = 1; i < img.getWidth() - 1; i++) 
+		for (int i = 0; i < img.getWidth(); i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 0; j < img.getHeight(); j++) 
             { 
             	if(largest < gradiants[i][j])
             	{

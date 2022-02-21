@@ -1,6 +1,9 @@
 package com.blackstonedj;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class CannyEdge 
 {
