@@ -18,7 +18,7 @@ public class DoubleThreshold
 		int[][] gradiants = edgeVals;
 		int largest = findLargest(img, gradiants);
 		Color[][] colors = new Color[img.getWidth()][img.getHeight()];
-		for (int i = 0; i < img.getWidth(); i++) 
+	for (int i = 0; i < img.getWidth(); i++) 
         {
             for (int j = 0; j < img.getHeight(); j++) 
             { 
