@@ -7,9 +7,9 @@ public class DoubleThreshold
 {
 	private float upper = 0;
 	private float lower = 0;
-	Label[][] labels;
-	int[][] gradiants;
-	Color[][] colors;
+	private Label[][] labels;
+	private int[][] gradiants;
+	private Color[][] colors;
 	public DoubleThreshold(float upper, float lower)
 	{
 		this.upper = upper;
