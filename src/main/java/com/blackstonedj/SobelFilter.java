@@ -128,8 +128,8 @@ public class SobelFilter implements EdgeDetector
 			t++;
 		}
 		
-		edge = thinnerCleanUp(edge,img);
-		edge = thinnerCleanUp(edge,img);
+		//edge = thinnerCleanUp(edge,img);
+		//edge = thinnerCleanUp(edge,img);
 		
 		edgeCmp = edge;
 		double max = getMax();
@@ -222,7 +222,8 @@ public class SobelFilter implements EdgeDetector
 	
 	            	else if(dir[i][j] == Direction.NWSE && dir[i][j] == currentDir)
 	            	{
-	            		if(edgeCmp[i-1][j-1] > edgeCmp[i][j]||
+	            		
+	            		if(edgeCmp[i-1][j-1] > edgeCmp[i][j] ||
 	            		   edgeCmp[i+1][j+1] > edgeCmp[i][j])
 	            		{
 	            			edge[i][j] = 0;
@@ -306,9 +307,9 @@ public class SobelFilter implements EdgeDetector
 		return edge;
 	}
 	
-	private int[][]  fillTmpArray(int[][]array, BufferedImage img)
+	private int[][] fillTmpArray(int[][]array, BufferedImage img)
 	{
-		int[][] arrayNew = new int[array.length][array.length];
+		int[][] arrayNew = new int[img.getWidth()][img.getHeight()];
 		for (int i = 0; i < img.getWidth(); i++) 
         {
             for (int j = 0; j < img.getHeight(); j++) 
@@ -338,7 +339,7 @@ public class SobelFilter implements EdgeDetector
 
 	//1020
 	//gets max possible gradient
-	private double getMax()
+	public double getMax()
 	{
 		int gX =  ((1 *  MAX) + (2 *  MAX) + (1 *  MAX)) 
 				+ ((0 *  MIN) + (0 *  MIN) + (0 *  MIN))                        
@@ -351,7 +352,7 @@ public class SobelFilter implements EdgeDetector
         return Math.sqrt((gX * gY) + (gY * gY));
 	}	
 	
-	public static int convertPixelVal(int rgb) {
+	private static int convertPixelVal(int rgb) {
         int r = (rgb >> 16) & 0xff;
         int g = (rgb >> 8) & 0xff;
         int b = (rgb) & 0xff;

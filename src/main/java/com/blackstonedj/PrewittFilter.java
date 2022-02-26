@@ -67,7 +67,7 @@ public class PrewittFilter implements EdgeDetector
 	          }
 	      }
            
-        int max = getMax();
+        double max = getMax();
         Color[][] colors = new Color[img.getWidth()][img.getHeight()];
 
 		if(direction || magnitude)
@@ -164,7 +164,7 @@ public class PrewittFilter implements EdgeDetector
             }
         }
 		
-		int max = getMax();
+		double max = getMax();
 		for (int i = 0; i < img.getWidth(); i++) 
         {
             for (int j = 0; j < img.getHeight(); j++) 
@@ -185,7 +185,7 @@ public class PrewittFilter implements EdgeDetector
 		return img;
 	}
 	
-	private int largestEdge(int[][] edgeVals, int width, int height, int max) 
+	private int largestEdge(int[][] edgeVals, int width, int height, double max) 
 	{
 		int largest = -1;
 		for (int i = 0; i < width; i++) 
@@ -202,7 +202,7 @@ public class PrewittFilter implements EdgeDetector
 	}
 	
 	//gets max possible gradient
-	private int getMax()
+	public double getMax()
 	{
 		int gX =  ((1 * MAX) + (2 * MAX) + (1 * MAX)) 
 				+ ((0 * MIN) + (0 * MIN) + (0 * MIN))                        

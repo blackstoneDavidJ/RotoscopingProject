@@ -35,7 +35,7 @@ public class ImageDrawer
         {
             for (int j = 0; j < img.getHeight() / 2; j++) 
             {           	
-            	img.setRGB(i,j, new Color(255,255,255).getRGB());
+            	img.setRGB(i,j, Color.WHITE.getRGB());
             }
         }
 		
@@ -83,9 +83,18 @@ public class ImageDrawer
         {
             for (int j = 0; j < img.getHeight() / 2; j++) 
             {           	
-            	img.setRGB(i,j, new Color(255,255,255).getRGB());
+            	img.setRGB(i,j, Color.BLACK.getRGB());
             }
         }
+		
+		for (int i = 0; i < img.getWidth(); i++) 
+        {
+            for (int j = img.getHeight() / 3; j < img.getHeight(); j++) 
+            {           	
+            	img.setRGB(i,j, Color.WHITE.getRGB());
+            }
+        }
+		
 		
 		int h = (190);
 		int k = ((img.getHeight()) / 2);
@@ -98,7 +107,7 @@ public class ImageDrawer
 				double val = Math.pow(i - h,2) + Math.pow(j - k,2);
 				if(val/4 <= radius)
 				{
-					img.setRGB(i, j, Color.DARK_GRAY.getRGB());
+					img.setRGB(i, j, Color.YELLOW.getRGB());
 				}
 				
 			}
@@ -131,12 +140,12 @@ public class ImageDrawer
         {
             for (int j = 0; j < img.getHeight() / 2; j++) 
             {           	
-            	img.setRGB(i,j, new Color(255,255,255).getRGB());
+            	img.setRGB(i,j, Color.WHITE.getRGB());
             }
         }
 		
 		int h = ((img.getWidth()) / 2);
-		int k = ((img.getHeight()) / 2);
+		int k = ((img.getHeight()) -150);
 		
 		for(int i=h;i<h+50;i++)
 		{
@@ -145,6 +154,62 @@ public class ImageDrawer
 				img.setRGB(i, j, Color.DARK_GRAY.getRGB());
 			}
 		}
+		
+		return img;
+	}
+	
+	public BufferedImage draw5()
+	{
+		BufferedImage img = new BufferedImage(255,255,BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < img.getWidth(); i++) 
+        {
+            for (int j = 0; j < img.getHeight(); j++) 
+            {           	
+            	img.setRGB(i,j, Color.WHITE.getRGB());
+            }
+        }
+		
+		int h2 = ((img.getWidth()) / 2);
+		int k2 = ((img.getHeight()) / 2);
+
+		int radius2 = 600;
+		for(int i = 0; i < img.getWidth(); i++)
+		{
+			for(int j = 0; j < img.getHeight(); j++)
+			{
+				double val = Math.pow(i - h2,2) + Math.pow(j - k2,2);
+				if(val/4 <= radius2)
+				{
+					img.setRGB(i, j, Color.BLACK.getRGB());
+				}
+				
+			}
+		}
+		
+		int h = ((img.getWidth()) / 2);
+		int k = ((img.getHeight()) /2-50);
+		
+		for(int i=h;i<h+50;i++)
+		{
+			for(int j=k;j<k+50;j++)
+			{
+				img.setRGB(i, j, Color.LIGHT_GRAY.getRGB());
+			}
+		}
+		
+		int h3 = ((img.getWidth())/5-25);
+		int k3 = ((img.getHeight()) -200);
+		
+		for(int i=h3;i<h3+50;i++)
+		{
+			for(int j=k3;j<k3+50;j++)
+			{
+				img.setRGB(i, j, Color.LIGHT_GRAY.getRGB());
+			}
+		}
+			
+		
+		
 		
 		return img;
 	}
