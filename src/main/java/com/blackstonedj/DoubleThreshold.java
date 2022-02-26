@@ -83,7 +83,7 @@ public class DoubleThreshold
             for (int j = 1; j < img.getHeight() - 1; j++) 
             {
 				int edgeColor = gradiants[i][j];
-                edgeColor = (int)(edgeColor * (255.0 / 720));
+                edgeColor = (int)(edgeColor * (255.0 / max));
                  
                 if(edgeColor > 0)
                 {
