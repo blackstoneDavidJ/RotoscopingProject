@@ -2,7 +2,6 @@ package com.blackstonedj;
 
 import java.awt.image.BufferedImage;
 
-
 public class CannyEdge 
 {
 	private EdgeDetector filter;
@@ -30,9 +29,8 @@ public class CannyEdge
 		img = blur.gaussianFilter(img);
 		img = filter.edgeDetection(img, direction, thinned);
 		img = thresh.DoubleThresholder(img, filter.getEdgeVals());
-		img = thresh.hysterisis(img, filter.getMax());
+		//img = thresh.hysterisis(img, filter.getMax());
 		
 		return img;
 	}
 }
- 

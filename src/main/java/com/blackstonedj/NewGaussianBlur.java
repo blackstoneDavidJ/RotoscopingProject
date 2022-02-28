@@ -124,9 +124,7 @@ public class NewGaussianBlur
 			for(int j = 0; j < weights[i].length; j++)
 			{
 				weights[i][j] /= sum;
-				System.out.print(weights[i][j] +" ");
 			}
-			System.out.println('\n');
 		}
 		return weights;
 	}

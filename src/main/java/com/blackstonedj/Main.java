@@ -7,7 +7,7 @@ public class Main
 {
 	public static void main(String[] args) 
 	{
-		String path = "resources/input/image5.png";
+		String path = "resources/input/image4.png";
 		ImageModder modder = new ImageModder(path);
 		BufferedImage img = modder.getImage();
 		GreyScale grey = new GreyScale();
@@ -18,7 +18,7 @@ public class Main
 		DoubleThreshold thresh = new DoubleThreshold(.4f, .2f);
 		//modder.save("squarethinned_10std_41x41r", new SobelFilter().edgeDetection(blur.gaussianFilter(img), true,true));
 		CannyEdge canny = new CannyEdge(edge, grey, blur, thresh, true,true);
-		modder.save("cartoon", canny.proccessor(img));
+		modder.save("image4before", canny.proccessor(img));
 		//modder.save("image5", draw.draw5());
 		//modder.save("circleblur10", blur.gaussianFilter(img));
 		//modder.save("testblur", edge.edgeDetection(blur.gaussianFilter(img), false,false));
