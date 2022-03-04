@@ -276,4 +276,23 @@ public class ImageDrawer
 		
 		return img;
 	}
+	
+	public BufferedImage draw7()
+	{
+		int colorStart = 255;
+		BufferedImage img = new BufferedImage(355,255,BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < img.getWidth(); i++) 
+        {
+            for (int j = 0; j < img.getHeight(); j++) 
+            {           	
+            	if(colorStart < 0) colorStart = 0;
+            	img.setRGB(i,j, new Color(colorStart,colorStart,colorStart).getRGB());
+            }
+            
+            colorStart--;
+        }
+		
+		
+		return img;
+	}
 }

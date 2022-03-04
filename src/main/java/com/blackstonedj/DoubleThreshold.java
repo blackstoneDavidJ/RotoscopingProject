@@ -71,18 +71,49 @@ public class DoubleThreshold
         {
             for (int j = 1; j < img.getHeight()-1; j++) 
             { 
-            	if(labels[i][j] != Label.STRONG)
+            	if(labels[i][j] != Label.STRONG && labels[i][j] != Label.WEAK_KEEP)
             	{
             		gradiants[i][j] = 0;
+            		labels[i][j] = Label.NONE;
             	}
             }
         }
 		
-	    for (int i = 1; i < img.getWidth() - 1; i++) 
+	    for (int i = 1; i < img.getWidth()-1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 1; j < img.getHeight()-1; j++) 
             {
-				int edgeColor = gradiants[i][j];
+            	if(labels[i][j] == Label.STRONG)
+            	{
+            		img.setRGB(i, j, Color.BLACK.getRGB());
+            		img.setRGB(i, j-1, Color.BLACK.getRGB());
+            		img.setRGB(i, j+1, Color.BLACK.getRGB());
+            		
+            		//making sure (i,j) are in bounds
+            		if(i+2 < (img.getWidth()) && 
+            		   i-2 > 0 && j-2 > 0 && 
+            		   i-2 < (img.getWidth()) && 
+            		   j+2 < (img.getHeight()) && 
+            		   j+2 < (img.getHeight()))
+            		{
+            			img.setRGB(i, j-2, Color.BLACK.getRGB());
+            			img.setRGB(i, j+2,Color.BLACK.getRGB());
+            		}
+            	}
+            	
+            	else if(labels[i][j] == Label.WEAK_KEEP)
+            	{
+            		img.setRGB(i, j-1, Color.BLACK.getRGB());
+            		img.setRGB(i, j+1, Color.BLACK.getRGB());
+            		img.setRGB(i, j, Color.BLACK.getRGB());
+            	}
+            	
+            	else
+            	{
+            		img.setRGB(i, j, Color.WHITE.getRGB());
+            	}
+            	
+				/*int edgeColor = gradiants[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
                  
                 if(edgeColor > 0)
@@ -90,7 +121,7 @@ public class DoubleThreshold
 	                edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
                 }
                 
-                img.setRGB(i, j, edgeColor);
+                img.setRGB(i, j, edgeColor);*/
             }
         }
 		
@@ -102,56 +133,56 @@ public class DoubleThreshold
 	{
 		if(labels[i-1][j] == Label.WEAK)
 		{
-			labels[i-1][j] = Label.STRONG;
+			labels[i-1][j] = Label.WEAK_KEEP;
 			g[i-1][j] = gradiants[i][j];
 			checkNeighbors(g, i-1, j);
 		}
 		
 		if(labels[i+1][j] == Label.WEAK)
 		{
-			labels[i+1][j] = Label.STRONG;
+			labels[i+1][j] = Label.WEAK_KEEP;
 			g[i+1][j] = gradiants[i][j];
 			checkNeighbors(g, i+1, j);
 		}
 		
 		if(labels[i][j-1] == Label.WEAK)
 		{
-			labels[i][j-1] = Label.STRONG;
+			labels[i][j-1] = Label.WEAK_KEEP;
 			g[i][j-1] = gradiants[i][j];
 			checkNeighbors(g, i, j-1);
 		}
 		
 		if(labels[i][j+1] == Label.WEAK)
 		{
-			labels[i][j+1] = Label.STRONG;
+			labels[i][j+1] = Label.WEAK_KEEP;
 			g[i][j+1] = gradiants[i][j];
 			checkNeighbors(g, i, j+1);
 		}
 		
 		if(labels[i-1][j-1] == Label.WEAK)
 		{
-			labels[i-1][j-1] = Label.STRONG;
+			labels[i-1][j-1] = Label.WEAK_KEEP;
 			g[i-1][j-1] = gradiants[i][j];
 			checkNeighbors(g, i-1, j-1);
 		}
 		
 		if(labels[i+1][j+1] == Label.WEAK)
 		{
-			labels[i+1][j+1] = Label.STRONG;
+			labels[i+1][j+1] = Label.WEAK_KEEP;
 			g[i+1][j+1] = gradiants[i][j];
 			checkNeighbors(g, i+1, j+1);
 		}
 		
 		if(labels[i-1][j+1] == Label.WEAK)
 		{
-			labels[i-1][j+1] = Label.STRONG;
+			labels[i-1][j+1] = Label.WEAK_KEEP;
 			g[i-1][j+1] = gradiants[i][j];
 			checkNeighbors(g, i-1, j+1);
 		}
 		
 		if(labels[i+1][j-1] == Label.WEAK)
 		{
-			labels[i+1][j-1] = Label.STRONG;
+			labels[i+1][j-1] = Label.WEAK_KEEP;
 			g[i+1][j-1] = gradiants[i][j];
 			checkNeighbors(g, i+1, j-1);
 		}		
@@ -188,62 +219,7 @@ public class DoubleThreshold
 	{
 		NONE,
 		WEAK,
+		WEAK_KEEP,
 		STRONG
 	}
-	
-	/*if(labels[i-1][j] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i-1][j];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i+1][j] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i+1][j];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i][j-1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i][j-1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i][j+1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i][j+1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i-1][j-1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i-1][j-1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i+1][j+1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i+1][j+1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i-1][j+1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i-1][j+1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else if(labels[i+1][j-1] == Label.STRONG)
-	{
-		gradiants[i][j] = gradiants[i+1][j-1];
-		colors[i][j] = Color.WHITE;
-	}
-	
-	else 
-	{
-		gradiants[i][j] = 0;
-		colors[i][j] = Color.BLACK;
-	}
-	
-	img.setRGB(i, j, colors[i][j].getRGB());*/
 }
