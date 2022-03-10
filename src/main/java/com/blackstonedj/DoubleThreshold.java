@@ -112,16 +112,6 @@ public class DoubleThreshold
             	{
             		img.setRGB(i, j, Color.WHITE.getRGB());
             	}
-            	
-				/*int edgeColor = gradiants[i][j];
-                edgeColor = (int)(edgeColor * (255.0 / max));
-                 
-                if(edgeColor > 0)
-                {
-	                edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
-                }
-                
-                img.setRGB(i, j, edgeColor);*/
             }
         }
 		

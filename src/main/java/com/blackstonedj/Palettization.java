@@ -49,7 +49,9 @@ public class Palettization
 					tmpKey++;
 					keys[t] = tmpKey;
 				}
+				
 				categories.put((Integer) keys[t], new int[img.getWidth()][img.getHeight()]);
+				
 			}
 			passes--;
 		}
@@ -58,17 +60,29 @@ public class Palettization
 		keys = categories.keySet().toArray();
 		int closestKey = 0;
 		int currentPixel = 0;
-
+		int[][] tmpFill = new int[img.getWidth()][img.getHeight()];
+		for (int i = 0; i < keys.length; i++) 
+        {	
+			//System.out.println("key: " +keys[i]);
+        }
+		//System.out.println("key: " +keys[0]);
 		for (int i = 0; i < img.getWidth(); i++) 
         {			
             for (int j = 0; j < img.getHeight(); j++) 
             { 
+            	
             	currentPixel = pixelVals[i][j];           	
             	closestKey = getClosest(keys, currentPixel);
-            	int[][] tmpFill = categories.get(closestKey);
+				//System.out.println("sel key: " +closestKey);
+            	tmpFill = categories.get(closestKey);
+            	if(tmpFill == null)
+            	{
+            		System.out.println("null");
+            	}
             	tmpFill[i][j] = currentPixel;
-            	categories.put(closestKey, tmpFill);
             	pixelVals[i][j] = closestKey;
+            	
+            	categories.put(closestKey, tmpFill);            	
             }
         }
 		
@@ -97,9 +111,17 @@ public class Palettization
 		            	}
 		            }
 		        }
-	
+				if(length == 0) 
+				{
+					//System.out.println("0: " +keys[index]);
+					length++;
+				}
 				keys[index] = (sum / length);
 				index++;
+			}
+			for(int x = 0; x < keys.length; x++)
+			{
+				 if((int) keys[x] == 0) System.out.println((int)keys[x] +" i: " +x);
 			}
 			
 			img = getPalette(img, keys, passes);
@@ -112,8 +134,8 @@ public class Palettization
 	        {			
 	            for (int j = 0; j < img.getHeight(); j++) 
 	            { 
-	            	int val = pixelVals[i][j];
-	            	img.setRGB(i, j, new Color(val,val,val).getRGB());            	
+	            	int rgb = pixelVals[i][j];
+	            	img.setRGB(i, j, new Color(rgb).getRGB());            	
 	            }
 	        } 
 		}
@@ -131,12 +153,12 @@ public class Palettization
 			int randNumX = rand.nextInt(img.getWidth());
 			int randNumY = rand.nextInt(img.getHeight());
 			
-			int randPixelVal = (int) convertPixelVal(img.getRGB(randNumX, randNumY));
+			int randPixelVal = img.getRGB(randNumX, randNumY);
 			while(categories.containsKey(randPixelVal))
 			{
 				randPixelVal++;
-				
 			}
+			
 			categories.put(randPixelVal, new int[img.getWidth()][img.getHeight()]);
 			q++;
 		}	
@@ -146,24 +168,53 @@ public class Palettization
 
 	private int getClosest(Object[] keys, int pixel)
 	{
-		int currKeyDistance = 0;
-		int smallest = 255;
+		int smallest = 10000;
 		int selectedKey = 0;
 		int dist = 0;
 		for(int i = 0; i < keys.length; i++)
 		{
-			dist = Math.abs((int)keys[i] - pixel);
-			currKeyDistance = dist;
-			if(currKeyDistance < smallest)
+			dist = getDistance(pixel,(int) keys[i]);
+			System.out.println("distance: "+dist +" smallest: " +smallest +" keysel: " +selectedKey + " i: " +i +"kval: " +(int) keys[i]);
+			if(dist < smallest)
 			{
-				smallest = currKeyDistance;
+				smallest = dist;
+				int ke = (int) keys[i];
 				selectedKey = (int) keys[i];
+				System.out.println("key: " +selectedKey);
 			}
 		}
 		
+		if(selectedKey == 0)
+		{
+			System.out.println("0");
+		}
+		
+		else
+		{
+			System.out.println("key: " +selectedKey);
+		}
+		
+		System.out.println("--------");
 		return selectedKey;
-	}
+	} 
 	
+	private int getDistance(int p1, int p2) 
+	{
+		int dist = 0;
+		
+		int b1 = p1 & 0xff;
+		int g1 = (p1 & 0xff00) >> 8;
+		int r1 = (p1 & 0xff0000) >> 16;
+		
+		int b2 = p2 & 0xff;
+		int g2 = (p2 & 0xff00) >> 8;
+		int r2 = (p2 & 0xff0000) >> 16;
+				
+		dist = (int) Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(b2 - b1, 2) + Math.pow(g2 - g1, 2));
+		
+		return dist;
+	}
+
 	private static int[][] convertAllVals(BufferedImage img) 
 	{	
 		int[][] pixelVals = new int[img.getWidth()][img.getHeight()];
@@ -172,23 +223,11 @@ public class Palettization
             for (int j = 0; j < img.getHeight(); j++) 
             { 
             	int rgb = img.getRGB(i, j);
-            	int r = (rgb >> 16) & 0xff;
-                int g = (rgb >> 8) & 0xff;
-                int b = (rgb) & 0xff;
-                
-                pixelVals[i][j] = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+                pixelVals[i][j] = rgb;
             }
         }
 		
 		return pixelVals;
     }
-	
-	private static int convertPixelVal(int rgb) 
-	{
-        int r = (rgb >> 16) & 0xff;
-        int g = (rgb >> 8) & 0xff;
-        int b = (rgb) & 0xff;
-
-        return (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-	}
 }
