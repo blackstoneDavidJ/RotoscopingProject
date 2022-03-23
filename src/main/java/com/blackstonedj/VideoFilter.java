@@ -6,14 +6,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
+import org.bytedeco.javacpp.avcodec;
+import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber.Exception;
+import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
 public class VideoFilter 
@@ -31,69 +31,48 @@ public class VideoFilter
 		FFmpegFrameGrabber g = new FFmpegFrameGrabber(videoPath);
 		Java2DFrameConverter f = new Java2DFrameConverter();
 		GreyScale grey = new GreyScale();				
-		ArrayList<BufferedImage> images = new ArrayList<>();
+        FFmpegFrameRecorder recorder;
+
+		int counter = 0;
 		try {
-			g.start();			
-			/*FFmpegFrameRecorder recorder = new FFmpegFrameRecorder("resources/twsnewMovie.mp4",g.getImageWidth(), g.getImageHeight());  			 
-	        recorder.setFrameRate(g.getFrameRate()); 
-	        recorder.setVideoCodec(g.getVideoCodec());
-	        recorder.setVideoBitrate(g.getVideoBitrate());  
-	        recorder.setFormat(g.getFormat());  
-	        recorder.setVideoQuality(0); // maximum quality  
-	        recorder.start();  */
-	          	          
+			g.start();
+			//g.setVideoCodec(avcodec.AV_CODEC_ID_MP4ALS);
 			System.out.println("array length: " +g.getLengthInFrames());
-			
-			while(g.grab() != null && g.grabImage() != null)
+			recorder = new FFmpegFrameRecorder("resources/movie.mp4", g.getImageWidth(), g.getImageHeight());
+			recorder.setVideoCodec(g.getVideoCodec());
+			recorder.setVideoBitrate(g.getVideoBitrate());
+			//recorder.setVideoCodecName("test");
+			recorder.setFrameRate(g.getFrameRate());
+			recorder.setFormat("mp4");
+			recorder.start();
+			while(counter < g.getLengthInFrames())
 			{
 				try 
 				{
 					frame1 = g.grabImage();
-					images.add(grey.greyScale(f.getBufferedImage(frame1)));
-					//recorder.record(frame1);
+					BufferedImage img = f.convert(frame1);
+					img = grey.greyScale(img);	
+					recorder.record(f.getFrame(img));
+					counter++;
+					
+					System.out.println("counter: " +counter);
 				} 
 				
 				catch (Exception e) 		
 				{
 					e.printStackTrace();
 				}
-
 			}
 			
+			recorder.stop();
+			recorder.release();
 			g.close();
-			
-			//recorder.stop();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+		} 		
+		catch (Exception e1) 
+		{
 			e1.printStackTrace();
-		}  
+		}  		
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for(int i = 0; i < images.size(); i++)
-		{
-			try 
-			{
-				ImageIO.write(images.get(i), "png", baos);				
-			} 
-			
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		try 
-		{
-			byte[] video = baos.toByteArray();
-			FileOutputStream out = new FileOutputStream(new File("resources/Video.mp4"));
-			out.write(video);			
-			out.close();
-		} 
-		
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
 		
 	}
 }

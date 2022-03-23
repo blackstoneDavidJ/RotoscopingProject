@@ -246,67 +246,6 @@ public class SobelFilter implements EdgeDetector
 		return edge;
 	}
 	
-	private int[][] thinnerCleanUp(int[][] edge, BufferedImage img)
-	{
-		for (int i = 1; i < img.getWidth() - 1; i++) 
-        {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
-            {   
-            	if(edge[i-1][j] <= 24 && edge[i+1][j] <= 24  && edge[i][j-1] <= 24  && edge[i][j+1] <= 24  && 
-            	   edge[i-1][j-1] <= 24  && edge[i+1][j+1] <= 24  && edge[i+1][j-1] <= 24  && edge[i-1][j+1] <= 24  && edge[i][j] > 0)
-            	{
-            		edge[i][j] = 0;
-            	}            	
-            	
-            	else if(edge[i-1][j-1] > 0 && edge[i+1][j-1] > 0 && edge[i][j-1] == 0 && edge[i][j] > 0)
-            	{
-            		edge[i][j-1] = edge[i][j];
-            		edge[i][j] = 0;
-            	}
-            	
-            	else if(edge[i-1][j-1] > 0 && edge[i-1][j+1] > 0 && edge[i-1][j] == 0 && edge[i][j] > 0)
-            	{
-            		edge[i-1][j] = edge[i][j];
-            		edge[i][j] = 0;
-            	}
-            	
-            	else if(edge[i+1][j-1] > 0 && edge[i+1][j+1] > 0 && edge[i+1][j] == 0 && edge[i][j] > 0)
-            	{
-            		edge[i+1][j] = edge[i][j];
-            		edge[i][j] = 0;
-            	}
-            	
-            	else if(edge[i-1][j+1] > 0 && edge[i+1][j+1] > 0 && edge[i][j+1] == 0 && edge[i][j] > 0)
-            	{
-            		edge[i][j+1] = edge[i][j];
-            		edge[i][j] = 0;
-            	}
-            	
-            	else if(edge[i][j-1] > 0 && edge[i+1][j] > 0 && edge[i][j] > 0)
-        		{
-        			edge[i][j] = 0;
-        		}
-            	
-            	else if(edge[i-1][j] > 0 && edge[i][j+1] > 0 && edge[i][j] > 0)
-        		{
-        			edge[i][j] = 0;
-        		}
-            	
-            	else if(edge[i][j-1] > 0 && edge[i-1][j] > 0 && edge[i][j] > 0)
-        		{
-        			edge[i][j] = 0;
-        		}
-        	    
-        	    else if(edge[i][j+1] > 0 && edge[i+1][j] > 0 && edge[i][j] > 0)
-        	    {
-        	    	edge[i][j] = 0;
-        	    }           	
-            }
-        }
-		
-		return edge;
-	}
-	
 	private int[][] fillTmpArray(int[][]array, BufferedImage img)
 	{
 		int[][] arrayNew = new int[img.getWidth()][img.getHeight()];
