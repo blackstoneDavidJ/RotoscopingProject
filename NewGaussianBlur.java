@@ -3,63 +3,35 @@ package com.blackstonedj;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-//Gaussian Blur filter
-public class GaussianBlur 
+public class NewGaussianBlur 
 {
 	private int radius;
 	private double stddev;
 
 	//constructor takes an img and radius for kernal
-	public GaussianBlur(int radius, double stddev)
+	public NewGaussianBlur(double stddev)
 	{
-		this.radius = radius;
+		radius = (int) ((int) 4 * stddev);
+		if(radius % 2 == 0)
+		{
+			radius++;
+		}
 		this.stddev = stddev;
 	}
 	
-	//cjamge ,atrix 
-	//renormalize change matrix value, divide pixel value by sum of matrix
-	//gaussian filter
 	public BufferedImage gaussianFilter(BufferedImage img)
 	{
-		return createGaussianImage(img, generateWeightMatrix(radius, stddev), radius);
+		double[][] weights = generateWeights(radius, stddev);
+		return gaussianBlur(img, weights, radius, stddev);
 	}
-	
-	//generates a weight matrix based given parameters
-	private double[][] generateWeightMatrix(int radius, double stdev)
-	{
-		double[][] weights = new double[radius][radius];
-		double sum = 0;
-		for(int i = 0; i < weights.length; i++) 
-		{
-			for(int j = 0; j < weights[i].length; j++)
-			{
-				weights[i][j] = gaussianModel(i - radius / 2, j - radius / 2, stdev);
-				sum += weights[i][j];
-				
-			}
-		}
-		double sum2 = 0;
-		//divides weights by sum of weights
-		for(int i = 0; i < weights.length; i++) 
-		{
-			for(int j = 0; j < weights[i].length; j++)
-			{
-				weights[i][j] /= sum;
-				System.out.print(weights[i][j] +" ");
-			}
-			System.out.println('\n');
-		}
-		System.out.print(sum2);
-		return weights;
-	}
-	
-	private BufferedImage createGaussianImage(BufferedImage img, double[][] weights, int radius)
+
+	private BufferedImage gaussianBlur(BufferedImage img, double[][] weights, int radius, double stddev) 
 	{		
 		//for loop to access each pixel
 		BufferedImage answer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
-		for(int i = 1; i < img.getWidth() - 1; i++) 
+		for(int i = 0; i < img.getWidth(); i++) 
 		{
-			for(int j = 1; j < img.getHeight() - 1; j++)
+			for(int j = 0; j < img.getHeight(); j++)
 			{
 				double[][] distributedColorRed = new double[radius][radius];
 				double[][] distributedColorGreen = new double[radius][radius];
@@ -114,24 +86,47 @@ public class GaussianBlur
 		
 		return answer;
 	}
-	
-	//gets the weighted color value for each color array for each pixel
-	private int getWeightedColorValue(double[][] weightedColor)
+
+	private int getWeightedColorValue(double[][] weightedColor) 
 	{
 		double sum = 0;
 		
-		for(int i = 0; i < weightedColor.length; i++) {
+		for(int i = 0; i < weightedColor.length; i++) 
+		{
 			for(int j = 0; j < weightedColor[i].length; j++)
 			{
 				sum += weightedColor[i][j];
 			}
-		}
-		
-		System.out.println(sum);
+		}		
 		
 		return (int) sum;
 	}
-	
+
+	private double[][] generateWeights(int radius, double stddev) 
+	{
+		double[][] weights = new double[radius][radius];
+		double sum = 0;
+		for(int i = 0; i < weights.length; i++) 
+		{
+			for(int j = 0; j < weights[i].length; j++)
+			{
+				weights[i][j] = gaussianModel(i - radius / 2, j - radius / 2, stddev);
+				sum += weights[i][j];
+				
+			}
+		}
+		
+		//divides weights by sum of weights
+		for(int i = 0; i < weights.length; i++) 
+		{
+			for(int j = 0; j < weights[i].length; j++)
+			{
+				weights[i][j] /= sum;
+			}
+		}
+		return weights;
+	}
+
 	//gaussian 2D Function
 	private double gaussianModel(double x, double y, double std)
 	{
