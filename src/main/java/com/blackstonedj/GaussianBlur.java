@@ -54,9 +54,7 @@ public class GaussianBlur
 	}
 	
 	private BufferedImage createGaussianImage(BufferedImage img, double[][] weights, int radius)
-	{
-		System.out.println("working..");
-		
+	{		
 		//for loop to access each pixel
 		BufferedImage answer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for(int i = 1; i < img.getWidth() - 1; i++) 

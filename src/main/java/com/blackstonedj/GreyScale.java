@@ -33,7 +33,6 @@ public class GreyScale
         int b = (rgb) & 0xff;
 
         int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-	
         return gray;	
 	}
 }

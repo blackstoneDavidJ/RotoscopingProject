@@ -21,14 +21,13 @@ public class NewGaussianBlur
 	
 	public BufferedImage gaussianFilter(BufferedImage img)
 	{
+		//img = new GreyScale().greyScale(img);
 		double[][] weights = generateWeights(radius, stddev);
 		return gaussianBlur(img, weights, radius, stddev);
 	}
 
 	private BufferedImage gaussianBlur(BufferedImage img, double[][] weights, int radius, double stddev) 
-	{
-		System.out.println("working..");
-		
+	{		
 		//for loop to access each pixel
 		BufferedImage answer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for(int i = 0; i < img.getWidth(); i++) 

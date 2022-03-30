@@ -9,17 +9,8 @@ public class Main
 {
 	public static void main(String[] args) 
 	{
-		String ImagePath = "resources/input/car.png";
-		String VideoPath = "resources/input/videos/highway.mp4";
-		FFmpegFrameGrabber g = new FFmpegFrameGrabber("resources/input/videos/2min.mp4");
-		VideoFilter filter = new VideoFilter(VideoPath);
-		try {
-			filter.filter();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		String ImagePath = "resources/input/lizard.png";
+		String VideoPath = "resources/input/videos/cars.mp4";
 		ImageModder modder = new ImageModder(ImagePath);
 		BufferedImage img = modder.getImage();
 		GreyScale grey = new GreyScale();
@@ -31,7 +22,15 @@ public class Main
 		Combiner combiner = new Combiner();
 		CannyEdge canny = new CannyEdge(edge, grey, blur, thresh, true, true);
 
-		modder.save("combine", combiner.combineImages(canny.proccessor(img), palette.runner(new ImageModder(ImagePath).getImage())));
+		VideoFilter filter = new VideoFilter(VideoPath);
+		try {
+			filter.filter(canny, combiner, palette, ImagePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//modder.save("lizard_canny", combiner.combineImages(canny.proccessor(img), palette.runner(new ImageModder(ImagePath).getImage())));
 	
 	}
 }

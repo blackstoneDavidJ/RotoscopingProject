@@ -2,6 +2,10 @@ package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Combiner 
 {
@@ -9,9 +13,9 @@ public class Combiner
 	{		
 	}
 	
-	public BufferedImage combineImages(BufferedImage cannyImg, BufferedImage paletteImg)
+	public BufferedImage combineImages(BufferedImage cannyImg, BufferedImage paletteImg) throws IOException
 	{	
-		BufferedImage img = new BufferedImage(cannyImg.getWidth(), cannyImg.getHeight(), BufferedImage.TYPE_INT_RGB);		
+		//ImageIO.write(paletteImg, "png", new File("resources/uuuucomninedimg.png"));
 		for(int i = 0; i < cannyImg.getWidth(); i++)
 		{
 			for(int j = 0; j < cannyImg.getHeight(); j++)
@@ -19,16 +23,11 @@ public class Combiner
 				int pixelCol = cannyImg.getRGB(i,j);
 				if(pixelCol == -16777216)
 				{
-					img.setRGB(i, j, Color.BLACK.getRGB());
-				}
-				
-				else
-				{
-					img.setRGB(i, j, paletteImg.getRGB(i, j));
+					paletteImg.setRGB(i, j, Color.BLACK.getRGB());
 				}
 			}
 		}
-		
-		return img;		
+		//ImageIO.write(paletteImg, "png", new File("resources/befrercomninedimg.png"));
+		return paletteImg;		
 	}
 }

@@ -13,7 +13,7 @@ public class ImageModder
 	
 	public ImageModder()
 	{
-		image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+		image = null;
 	}
 	
 	public ImageModder(String path)
@@ -57,5 +57,10 @@ public class ImageModder
 	public BufferedImage getImage()
 	{
 		return image;
+	}
+	
+	public void setImage(BufferedImage image)
+	{
+		this.image = image;
 	}
 }

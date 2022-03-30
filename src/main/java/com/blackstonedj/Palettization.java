@@ -2,8 +2,12 @@ package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 public class Palettization 
 {
@@ -13,12 +17,12 @@ public class Palettization
 		this.k = k;
 	}
 	
-	public BufferedImage runner(BufferedImage img)
+	public BufferedImage runner(BufferedImage img) throws IOException
 	{
 		int passes = 15;
 		img = getPalette(img, null, passes);
 		
-		return img;
+		return img;	
 	}
 
 	private BufferedImage getPalette(BufferedImage img, Object[] keys, int passes)
