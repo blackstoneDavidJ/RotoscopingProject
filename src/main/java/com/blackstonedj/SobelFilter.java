@@ -11,7 +11,7 @@ import com.blackstonedj.SobelDirectional.Direction;
 //sobel edge detection
 public class SobelFilter implements EdgeDetector
 {
-	final static int MAX = 1020;
+	final static int MAX = 100;
 	final static int MIN = 0;
 	private int[][] edge = null;
 	
@@ -127,9 +127,6 @@ public class SobelFilter implements EdgeDetector
 			edge = edgeThinnerHelper(dirArray[t], dir, edge, edgeCmp, img);	
 			t++;
 		}
-		
-		//edge = thinnerCleanUp(edge,img);
-		//edge = thinnerCleanUp(edge,img);
 		
 		edgeCmp = edge;
 		double max = getMax();

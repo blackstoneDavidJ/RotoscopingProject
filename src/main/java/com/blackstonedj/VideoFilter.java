@@ -16,51 +16,72 @@ public class VideoFilter
 {
 	String videoPath;
 	double frameRate;
+	double frameBatch = 0;
 	public VideoFilter(String path)
 	{
 		videoPath = path;
 	}
 	
 	//opencv
-	public void filter(CannyEdge canny, Combiner combine, Palettization palette, String path) throws IOException
+	public void filter(CannyEdge canny, Combiner combine, Palettization palette, String path, int frameBatch) throws IOException
 	{
 		Frame frame1;
 		FFmpegFrameGrabber g = new FFmpegFrameGrabber(videoPath);
 		Java2DFrameConverter f = new Java2DFrameConverter();
         FFmpegFrameRecorder recorder;
-        ImageModder modder = new ImageModder();
 		int counter = 0;
 		try {
 			g.start();
-			//g.setVideoCodec(avcodec.AV_CODEC_ID_MP4ALS);
 			System.out.println("array length: " +g.getLengthInVideoFrames());
-			recorder = new FFmpegFrameRecorder("resources/car video.mp4", g.getImageWidth(), g.getImageHeight());
+			recorder = new FFmpegFrameRecorder("C:\\Users\\David\\eclipse-workspace\\imageProcessinhg\\resources\\video.mp4", g.getImageWidth(), g.getImageHeight());
 			recorder.setVideoCodec(g.getVideoCodec());
 			recorder.setVideoBitrate(g.getVideoBitrate());
-			//recorder.setVideoCodecName("test");
 			recorder.setFrameRate(g.getFrameRate());
 			recorder.setFormat("mp4");
 			recorder.start();
-			while(counter < g.getLengthInVideoFrames())
+			this.frameBatch = frameBatch;
+			BufferedImage startImg = null;
+			BufferedImage currImg = null;
+			BufferedImage paletteImg = null;
+			BufferedImage cannyImg = null;
+			BufferedImage combined = null;
+			BufferedImage[] palletteBatch = new BufferedImage[frameBatch];
+			BufferedImage[] normalBatch = new BufferedImage[frameBatch];
+			while(counter < 20)
 			{
 				try 
 				{
+					int imageCounter = 0;
+					int setCounter = 0;
 					frame1 = g.grabImage();
-					BufferedImage img = f.convert(frame1);
-					if(img != null)
-					{
-						//ImageIO.write(img, "png", new File("resources/img.png"));
-						BufferedImage paletteImg = palette.runner(img);
-						//ImageIO.write(paletteImg, "png", new File("resources/paletteimg.png"));
-						BufferedImage cannyImg = canny.proccessor(img);
-						//ImageIO.write(cannyImg, "png", new File("resources/i.png"));
-						BufferedImage combined = combine.combineImages(cannyImg, paletteImg);
-						//ImageIO.write(combined, "png", new File("resources/comninedimg.png"));
-						recorder.record(f.getFrame(combined));
-					}
-					counter++;
+					startImg = f.convert(frame1);
 					
-					System.out.println("counter: " +counter);
+					int i = 0;
+					while(i < frameBatch)
+					{
+						frame1 = g.grabImage();
+						currImg = f.convert(frame1);
+						palletteBatch[i] = currImg;
+						normalBatch[i] = currImg;
+						i++;
+						//imageCounter++;
+					}
+										
+					int index = 0;
+					paletteImg = palette.runner(startImg);
+					while(index < frameBatch)
+					{
+						palletteBatch[index] = paletteImg;
+						cannyImg = canny.proccessor(normalBatch[index]);
+						combined = combine.combineImages(cannyImg, palletteBatch[index]);
+						recorder.record(f.getFrame(combined));
+						combined = null;
+						//setCounter++;
+						index++;
+					}
+					
+					System.out.println("frame: " +counter);
+					counter += 10;
 				} 
 				
 				catch (Exception e) 		

@@ -25,10 +25,18 @@ public class CannyEdge
 	//edge detection with edge thinner
 	public BufferedImage proccessor(BufferedImage img)
 	{
+		//img = grey.greyScale(img);
+		//modder.save("applesGrey", img);
 		img = blur.gaussianFilter(img);
+		//modder.save("applesblur", img);
 		img = filter.edgeDetection(img, direction, thinned);
+		//modder.save("applesedgedirectionthinned", img);
+
 		img = thresh.DoubleThresholder(img, filter.getEdgeVals());
+		//modder.save("applesdoubleThresholder", img);
+
 		img = thresh.hysterisis(img, filter.getMax());
+		//modder.save("applesHysterisis", img);
 		
 		return img;
 	}
