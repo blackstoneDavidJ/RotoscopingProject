@@ -2,16 +2,18 @@
 -David Blackstone
 4/13/22
 ------------------
--  Program that turns real images/video frames, into cartoon images
+-  Java Program that turns real images into cartoon ones
+-  -Supports video filtering
 - steps:
 -   -GrayScale
 -   -GaussianBlur
 -   -EdgeDetection
 -   -EdgeDirectionDetection
 -   -EdgeThinning
+-   -DoubleThresholding
 -   -Hysterisis
 -   -EdgeThickening
 -   -Turn to full Black full White
 -   Pallettization:
 -   -K-means clustering
-- Combine both images
+- Combine both images to create the final result
