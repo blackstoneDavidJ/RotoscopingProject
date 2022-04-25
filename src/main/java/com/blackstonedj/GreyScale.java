@@ -13,17 +13,20 @@ public class GreyScale
 	{			
 		//loop that gets a rgb pixel, gets the r, g, b values, due to wavelength each color requires a weight
 		//being .3 for r, .59 for g, .11 for b
+		BufferedImage greyImg = new BufferedImage(img.getWidth(),img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for(int i = 0; i < img.getWidth(); i++) 
 		{
 			for(int j = 0; j < img.getHeight(); j++)
 			{
 				int val = getGreyPixel(img.getRGB(i, j));
 				Color color = new Color(val, val, val);
-				img.setRGB(i, j, color.getRGB());
+				greyImg.setRGB(i, j, color.getRGB());
 			}
 		}
 		
-		return img;
+		img.flush();
+		
+		return greyImg;
 	}
 	
 	private int getGreyPixel(int rgb) 

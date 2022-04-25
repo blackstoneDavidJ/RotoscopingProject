@@ -40,11 +40,14 @@ public class ImageModder
 	//save and image
 	public void save(String name, BufferedImage img)
 	{
-		File output = new File("C:/Users/David/eclipse-workspace/imageProcessinhg/resources/"+name +".png");
+		File output = new File("resources/"+name +".png");
 		try 
 		{
 			ImageIO.write(img, "png", output);
+			img.flush();
 		} 
+		
+		
 		
 		catch (IOException e) 
 		{

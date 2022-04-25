@@ -2,17 +2,15 @@ package com.blackstonedj;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import com.blackstonedj.SobelDirectional.Direction;
 
 //sobel edge detection
 public class SobelFilter implements EdgeDetector
 {
-	final static int MAX = 100;
-	final static int MIN = 0;
+	private final static int MAX = 1020;
+	private final static int MIN = 0;
+	private int imgWidth = 0;
+	private int imgHeight = 0;
 	private int[][] edge = null;
 	
 	public SobelFilter()
@@ -22,22 +20,25 @@ public class SobelFilter implements EdgeDetector
 	//sobel edge detection for the x/y axis
 	public BufferedImage edgeDetection(BufferedImage img, boolean direction, boolean magnitude)
 	{
+		BufferedImage edgeImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
+		imgWidth = img.getWidth();
+		imgHeight = img.getHeight();
         int largestEdge = -1;
         SobelDirectional colorEdge = null;
         Direction[][] dirVals = null;
         if(direction || magnitude) 
       	{
         	colorEdge = new SobelDirectional();
-        	dirVals = new Direction[img.getWidth()][img.getHeight()];
+        	dirVals = new Direction[imgWidth][imgHeight];
         }  
         
-		int[][] edgeVals = new int[img.getWidth()][img.getHeight()];
-		double[][] angleVals = new double[img.getWidth()][img.getHeight()];
+		int[][] edgeVals = new int[imgWidth][imgHeight];
+		double[][] angleVals = new double[imgWidth][imgHeight];
 		int gx = 0;
 		int gy = 0;
-		for (int i = 1; i < img.getWidth() - 1; i++) 
+		for (int i = 1; i < imgWidth - 1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 1; j < imgHeight - 1; j++) 
             { 
 	        	//get all 9 values
 	            int val00 = convertPixelVal(img.getRGB(i - 1, j - 1));
@@ -69,16 +70,16 @@ public class SobelFilter implements EdgeDetector
         }
 		        		
         double max = getMax();
-        Color[][] colors = new Color[img.getWidth()][img.getHeight()];
+        Color[][] colors = new Color[imgWidth][imgHeight];
 		if(direction || magnitude)
         {
-        	largestEdge = largestEdge(edgeVals, img.getWidth(), img.getHeight(), max);
+        	largestEdge = largestEdge(edgeVals, imgWidth, imgHeight, max);
         }
 		
         //normalize the values - set values
-        for (int i = 1; i < img.getWidth() - 1; i++) 
+        for (int i = 1; i < imgWidth - 1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 1; j < imgHeight - 1; j++) 
             {
 				int edgeColor = edgeVals[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
@@ -99,16 +100,16 @@ public class SobelFilter implements EdgeDetector
 	                }
                 }
                 
-                img.setRGB(i, j, edgeColor);
+                edgeImg.setRGB(i, j, edgeColor);
             }
         }
         
         if(magnitude)
         {
-        	img = edgeThinner(dirVals, edgeVals, colors, img, direction);
+        	edgeImg = edgeThinner(dirVals, edgeVals, colors, img, direction);
         }
         
-        return img;
+        return edgeImg;        
     }
 	
 	public int[][] getEdgeVals()
@@ -120,19 +121,19 @@ public class SobelFilter implements EdgeDetector
 	{
 		int t = 0;
 		Direction[] dirArray = new Direction[] { Direction.NS, Direction.EW, Direction.NWSE, Direction.NESW };
-		edge = fillTmpArray(edgeCmp, img);  
+		edge = edgeCmp;
 		
 		while(t < dirArray.length) 
 		{
-			edge = edgeThinnerHelper(dirArray[t], dir, edge, edgeCmp, img);	
+			edge = edgeThinnerHelper(dirArray[t], dir, edge, edgeCmp);	
 			t++;
 		}
-		
+
 		edgeCmp = edge;
 		double max = getMax();
-		for (int i = 1; i < img.getWidth() - 1; i++) 
+		for (int i = 1; i < imgWidth - 1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 1; j < imgHeight - 1; j++) 
             {
             	int edgeColor = edgeCmp[i][j];
                 edgeColor = (int)(edgeColor * (255.0 / max));
@@ -151,11 +152,11 @@ public class SobelFilter implements EdgeDetector
 		return img;
 	}
 	
-	private int[][] edgeThinnerHelper(Direction currentDir, Direction[][] dir, int[][] edge, int[][] edgeCmp, BufferedImage img)
+	private int[][] edgeThinnerHelper(Direction currentDir, Direction[][] dir, int[][] edge, int[][] edgeCmp)
 	{
-		for (int i = 1; i < img.getWidth() - 1; i++) 
+		for (int i = 1; i < imgWidth - 1; i++) 
         {
-            for (int j = 1; j < img.getHeight() - 1; j++) 
+            for (int j = 1; j < imgHeight - 1; j++) 
             {   
             	if(edgeCmp[i][j] > 0)
             	{
@@ -181,7 +182,7 @@ public class SobelFilter implements EdgeDetector
 	            	
 	            	else if(dir[i][j] == Direction.EW && dir[i][j] == currentDir)
 	            	{	            		
-	            		if(edgeCmp[i-1][j] > edgeCmp[i][j]||
+	            		if(edgeCmp[i-1][j] > edgeCmp[i][j] ||
 	            		   edgeCmp[i+1][j] > edgeCmp[i][j])
 	            		{
 	            			edge[i][j] = 0;
@@ -243,19 +244,19 @@ public class SobelFilter implements EdgeDetector
 		return edge;
 	}
 	
-	private int[][] fillTmpArray(int[][]array, BufferedImage img)
+	/*private int[][] fillTmpArray(int[][]array, BufferedImage img)
 	{
-		int[][] arrayNew = new int[img.getWidth()][img.getHeight()];
-		for (int i = 0; i < img.getWidth(); i++) 
+		int[][] arrayNew = new int[imgWith()][imgHeight()];
+		for (int i = 0; i < imgWith(); i++) 
         {
-            for (int j = 0; j < img.getHeight(); j++) 
+            for (int j = 0; j < imgHeight(); j++) 
             {
             	arrayNew[i][j] = array[i][j]; 
             }
         }
 		
 		return arrayNew;
-	}
+	}*/
 
 	private int largestEdge(int[][] edgeVals, int width, int height, double max) 
 	{

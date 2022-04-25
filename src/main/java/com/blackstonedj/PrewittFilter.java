@@ -8,8 +8,8 @@ import com.blackstonedj.PrewittDirectional.Direction;
 //Prewitt edge detection
 public class PrewittFilter implements EdgeDetector
 {
-	final static int MAX = 765;
-	final static int MIN = 0;
+	private final static int MAX = 765;
+	private final static int MIN = 0;
 	private int[][] edgeVals = null;
 	
 	public PrewittFilter()

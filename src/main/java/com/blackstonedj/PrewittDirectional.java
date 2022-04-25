@@ -2,9 +2,6 @@ package com.blackstonedj;
 
 
 import java.awt.Color;
-
-import com.blackstonedj.SobelDirectional.Direction;
-
 public class PrewittDirectional
 {
 	public PrewittDirectional()

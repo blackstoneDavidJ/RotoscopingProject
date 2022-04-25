@@ -6,13 +6,13 @@ public class CannyEdge
 {
 	private EdgeDetector filter;
 	private GreyScale grey;
-	private NewGaussianBlur blur;
+	private GaussianBlur blur;
 	private DoubleThreshold thresh;
 	private boolean direction = false;
 	private boolean thinned = false;
 	
 	//constructor taking in edge filter, greyscale filter, and gaussianblur kernel
-	public CannyEdge(EdgeDetector filter, GreyScale grey, NewGaussianBlur blur, DoubleThreshold thresh, boolean direction, boolean thinned)
+	public CannyEdge(EdgeDetector filter, GreyScale grey, GaussianBlur blur, DoubleThreshold thresh, boolean direction, boolean thinned)
 	{
 		this.filter    = filter;
 		this.grey 	   = grey;
@@ -25,19 +25,29 @@ public class CannyEdge
 	//edge detection with edge thinner
 	public BufferedImage proccessor(BufferedImage img)
 	{
-		//img = grey.greyScale(img);
-		//modder.save("applesGrey", img);
+		img = grey.greyScale(img);
 		img = blur.gaussianFilter(img);
-		//modder.save("applesblur", img);
 		img = filter.edgeDetection(img, direction, thinned);
-		//modder.save("applesedgedirectionthinned", img);
-
 		img = thresh.DoubleThresholder(img, filter.getEdgeVals());
-		//modder.save("applesdoubleThresholder", img);
-
 		img = thresh.hysterisis(img, filter.getMax());
-		//modder.save("applesHysterisis", img);
-		
-		return img;
+		BufferedImage cI = img;
+		img.flush();
+		return cI;
+	}
+
+	public BufferedImage[] proccessor(BufferedImage[] imageBatch) 
+	{
+			for (int i = 0; i < imageBatch.length; i++)
+			{
+				BufferedImage img = imageBatch[i];
+				img = grey.greyScale(img);
+				img = blur.gaussianFilter(img);
+				img = filter.edgeDetection(img, direction, thinned);
+				img = thresh.DoubleThresholder(img, filter.getEdgeVals());
+				imageBatch[i] = thresh.hysterisis(img, filter.getMax());
+				
+			}
+			
+			return imageBatch;
 	}
 }

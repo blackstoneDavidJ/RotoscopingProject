@@ -259,7 +259,6 @@ public class ImageDrawer
 		int h3 = (400);
 		int k3 = (50);
 
-		int radius3 = 300;
 		for(int i = 0 ; i < img.getWidth(); i++)
 		{
 			for(int j = 0; j < img.getHeight() ; j++)

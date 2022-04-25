@@ -1,11 +1,8 @@
 package com.blackstonedj;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
@@ -14,74 +11,53 @@ import org.bytedeco.javacv.Java2DFrameConverter;
 
 public class VideoFilter 
 {
-	String videoPath;
-	double frameRate;
-	double frameBatch = 0;
-	public VideoFilter(String path)
+	private String path;
+	private CannyEdge canny;
+	private Pallettization pallette;
+	private ImageModder m = new ImageModder();
+	public VideoFilter(CannyEdge canny, Pallettization pallette, String path)
 	{
-		videoPath = path;
+		this.path = path;
+		this.canny = canny;
+		this.pallette = pallette;
 	}
-	
-	//opencv
-	public void filter(CannyEdge canny, Combiner combine, Palettization palette, String path, int frameBatch) throws IOException
+
+	public void filter( int frameBatch) throws IOException
 	{
-		Frame frame1;
-		FFmpegFrameGrabber g = new FFmpegFrameGrabber(videoPath);
-		Java2DFrameConverter f = new Java2DFrameConverter();
-        FFmpegFrameRecorder recorder;
+		FFmpegFrameGrabber g = new FFmpegFrameGrabber(path);
+		FFmpegFrameRecorder recorder;
 		int counter = 0;
 		try {
 			g.start();
-			System.out.println("array length: " +g.getLengthInVideoFrames());
-			recorder = new FFmpegFrameRecorder("C:\\Users\\David\\eclipse-workspace\\imageProcessinhg\\resources\\video.mp4", g.getImageWidth(), g.getImageHeight());
+			recorder = new FFmpegFrameRecorder("resources/city.mp4", g.getImageWidth(), g.getImageHeight());
 			recorder.setVideoCodec(g.getVideoCodec());
 			recorder.setVideoBitrate(g.getVideoBitrate());
 			recorder.setFrameRate(g.getFrameRate());
 			recorder.setFormat("mp4");
 			recorder.start();
-			this.frameBatch = frameBatch;
-			BufferedImage startImg = null;
-			BufferedImage currImg = null;
-			BufferedImage paletteImg = null;
-			BufferedImage cannyImg = null;
-			BufferedImage combined = null;
-			BufferedImage[] palletteBatch = new BufferedImage[frameBatch];
-			BufferedImage[] normalBatch = new BufferedImage[frameBatch];
-			while(counter < 20)
+			int frameCount = (g.getLengthInFrames()-200);
+			System.out.println("#Frames: " +frameCount);
+			Java2DFrameConverter f = new Java2DFrameConverter();
+			while(counter < frameCount)
 			{
 				try 
 				{
-					int imageCounter = 0;
-					int setCounter = 0;
-					frame1 = g.grabImage();
-					startImg = f.convert(frame1);
-					
-					int i = 0;
-					while(i < frameBatch)
+					Frame[] imageBatch = new Frame[frameBatch];
+					for(int i = 0; i < frameBatch; i++)
 					{
-						frame1 = g.grabImage();
-						currImg = f.convert(frame1);
-						palletteBatch[i] = currImg;
-						normalBatch[i] = currImg;
-						i++;
-						//imageCounter++;
-					}
-										
-					int index = 0;
-					paletteImg = palette.runner(startImg);
-					while(index < frameBatch)
-					{
-						palletteBatch[index] = paletteImg;
-						cannyImg = canny.proccessor(normalBatch[index]);
-						combined = combine.combineImages(cannyImg, palletteBatch[index]);
-						recorder.record(f.getFrame(combined));
-						combined = null;
-						//setCounter++;
-						index++;
+						imageBatch[i] = g.grabImage();
 					}
 					
-					System.out.println("frame: " +counter);
+					BufferedImage[] p = getPalletteImages(imageBatch);
+					BufferedImage[] c = getCannyImages(imageBatch);
+					convertFromFrames(c,p, recorder);
+					/*for(int e = 0; e < fr.length; e++)
+					{
+						recorder.record(fr[e]);
+					}	*/
+					
 					counter += 10;
+					System.out.println("frame: " +counter);
 				} 
 				
 				catch (Exception e) 		
@@ -97,8 +73,74 @@ public class VideoFilter
 		catch (Exception e1) 
 		{
 			e1.printStackTrace();
-		}  		
+		}  			
+	}
+	
+	private BufferedImage[] getPalletteImages(Frame[] frames) throws IOException
+	{
+		Java2DFrameConverter f = new Java2DFrameConverter();
+		BufferedImage[] palletteArray = new BufferedImage[frames.length];
+		for(int i = 0; i < frames.length; i++)
+		{
+			palletteArray[i] = pallette.runner(f.convert(frames[i]));
+			System.out.println("p"+i);
+		}
+		
+		return palletteArray;
+	}
+	
+	private BufferedImage[] getCannyImages(Frame[] frames) throws IOException
+	{
+		Java2DFrameConverter f = new Java2DFrameConverter();
+		BufferedImage[] cannyArray = new BufferedImage[frames.length];
+		for(int i = 0; i < frames.length; i++)
+		{
+			cannyArray[i] = this.canny.proccessor(f.convert(frames[i]));
+			System.out.println("c"+i);
+		}
+		
+		return cannyArray;
+	}
+	
+	private void convertFromFrames(BufferedImage[] c, BufferedImage[] p, FFmpegFrameRecorder recorder) throws org.bytedeco.javacv.FrameRecorder.Exception
+	{
+		Java2DFrameConverter f = new Java2DFrameConverter();
+		
+		BufferedImage[] a = combineImages(c,p);
+		Frame[] frames = new Frame[a.length];
 		
 		
+		for(int i = 0; i < a.length; i++)
+		{
+			frames[i] = f.convert(a[i]);
+			recorder.record(frames[i]);
+		}
+	}
+	
+	public BufferedImage[] combineImages(BufferedImage[] c, BufferedImage[] p)
+	{
+		BufferedImage[] comb = new BufferedImage[c.length];
+		for(int y = 0; y< c.length; y++)
+		{
+			BufferedImage cannyImg = c[y];
+			BufferedImage palletteImg = p[y];
+			for(int i = 0; i < cannyImg.getWidth(); i++)
+			{
+				for(int j = 0; j < cannyImg.getHeight(); j++)
+				{
+					int pixelCol = cannyImg.getRGB(i,j);
+					if(pixelCol == -16777216)
+					{
+						palletteImg.setRGB(i, j, Color.BLACK.getRGB());
+					}
+				}
+			}
+			
+			comb[y] = palletteImg;
+			//cannyImg.flush();
+			//palletteImg.flush();
+		}
+		
+		return comb;
 	}
 }
