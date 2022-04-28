@@ -7,23 +7,17 @@ public class Main
 {
 	public static void main(String[] args) 
 	{
-		//String ImagePath = "resources/input/lizard.png";
-		String VideoPath = "C:/Users/daveb/Desktop/SProject/blackstonedj/resources/input/videos/cars.mp4";
-		//ImageModder modder = new ImageModder(ImagePath);
-		//BufferedImage img = modder.getImage();
+		String VideoPath = args[0];
 		GreyScale grey = new GreyScale();
 		EdgeDetector edge = new SobelFilter();
 		GaussianBlur blur = new GaussianBlur(1);
-		DoubleThreshold thresh = new DoubleThreshold(.4f, .2f);
-		Pallettization palette = new Pallettization(6);
-		//Combiner combiner = new Combiner();
+		DoubleThreshold thresh = new DoubleThreshold(.5f, .3f);
+		Pallettization palette = new Pallettization(20);
 		CannyEdge canny = new CannyEdge(edge, grey, blur, thresh, true, true);
-		VideoFilter filter = new VideoFilter(canny, palette, VideoPath);
-		
-		int batchAmount = 10;
+		VideoFilter filter = new VideoFilter(canny, palette, VideoPath, args[1]);
 		try 
 		{
-			filter.filter(batchAmount);
+			filter.filter();
 		} 
 		
 		catch (IOException e) 

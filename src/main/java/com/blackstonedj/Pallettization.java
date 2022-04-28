@@ -16,20 +16,6 @@ public class Pallettization
 		this.k = k;
 	}
 	
-	public BufferedImage[] runner(BufferedImage[] images) throws IOException
-	{
-		BufferedImage[] palletteImages = new BufferedImage[images.length]; 
-		for(int i = 0; i < images.length; i++)
-		{
-			System.out.println(i);
-			BufferedImage img = images[i];
-			palletteImages[i] = getPalette(img, null, PASSES);
-			//img.flush();
-		}
-		
-		return palletteImages;	
-	}
-	
 	public BufferedImage runner(BufferedImage img) throws IOException
 	{
 		BufferedImage palletteImg =  getPalette(img, null, PASSES);
@@ -122,7 +108,10 @@ public class Pallettization
 		            	}
 		            }
 		        }
-
+				if(length == 0)
+				{
+					length++;
+				}
 				keys[index] = new Color(sumR/length, sumG/length, sumB/length).getRGB();
 				index++;
 			}
