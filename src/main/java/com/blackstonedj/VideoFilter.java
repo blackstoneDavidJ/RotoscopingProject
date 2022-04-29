@@ -30,7 +30,8 @@ public class VideoFilter
 		try {
 			g.start();
 			recorder = new FFmpegFrameRecorder(outputName+".mp4", g.getImageWidth(), g.getImageHeight());
-			recorder.setVideoCodec(g.getVideoCodec());
+			//recorder.setVideoCodec(g.getVideoCodec());
+			recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
 			recorder.setVideoBitrate(g.getVideoBitrate());
 			recorder.setFrameRate(g.getFrameRate());
 			recorder.setFormat("mp4");
