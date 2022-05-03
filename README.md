@@ -5,7 +5,7 @@
 -  Java Program that turns real images into cartoon ones
 -  -Supports Image Filtering
 -  -Supports Video Filtering
--   (Heathers Rotoscoped Movie Example:
+-  - (Heathers Rotoscoped Movie Example:
     https://drive.google.com/file/d/1iX_9WgQZliuqXPkaw9ics_D6gnq2TAv9/view?usp=sharing )
 -  -Supports Condor Distributed Processing
 - steps:
