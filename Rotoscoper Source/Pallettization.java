@@ -3,8 +3,11 @@ package com.blackstonedj;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,6 +17,9 @@ public class Pallettization
 {
 	private static final int PASSES = 15;
 	private int k = 0;
+	private int imgWidth;
+	private int imgHeight;
+	
 	public Pallettization(int k)
 	{
 		this.k = k;
@@ -21,13 +27,28 @@ public class Pallettization
 	
 	public BufferedImage runner(BufferedImage img) throws IOException
 	{
-		BufferedImage palletteImg = null;
-		if(!allEqual(convertAllVals(img)))
-		{
-			 palletteImg = getPalette(img, null, PASSES);
-		}
 		
+		BufferedImage palletteImg = null;
+		if(img != null)
+		{
+			imgWidth = img.getWidth();
+			imgHeight = img.getHeight();
+			int[][] pixelVals = convertAllVals(img);
+			img.flush();
+			if(!allEqual(pixelVals))
+			{
+				 palletteImg = arrayToImage(getPalette(pixelVals, null, PASSES));
+			}
+		}
 		return palletteImg;
+	}
+	
+	public BufferedImage[] runner(BufferedImage[] images) throws IOException
+	{
+		BufferedImage[] palletteImages = null;
+		int[][] pixelVals = getPalette(putImagesIntoArray(images), null, PASSES);
+		
+		return palletteImages;
 	}
 
 
@@ -36,18 +57,17 @@ public class Pallettization
 		return Arrays.stream(arr).distinct().count() == arr[0][0];
 	}
 
-	private BufferedImage getPalette(BufferedImage img, Object[] keys, int passes)
+	private int[][] getPalette(int[][] pixelVals, Object[] keys, int passes)
 	{
-		int[][] pixelVals = convertAllVals(img);
 		HashMap<Integer, int[][]> categories = new HashMap<>();
 		
 		//get starting ran vals
 		if(keys == null)
 		{
-			categories = getRandomVals(img, categories);
+			categories = getRandomVals(pixelVals, categories);
 			if(categories == null)
 			{
-				return img;
+				return pixelVals;
 			}
 		}
 				
@@ -64,7 +84,7 @@ public class Pallettization
 					keys[t] = tmpKey;
 				}
 				
-				categories.put((Integer) keys[t], new int[img.getWidth()][img.getHeight()]);
+				categories.put((Integer) keys[t], new int[imgWidth][imgHeight]);
 				
 			}
 			passes--;
@@ -74,10 +94,10 @@ public class Pallettization
 		keys = categories.keySet().toArray();
 		int closestKey = 0;
 		int currentPixel = 0;
-		int[][] tmpFill = new int[img.getWidth()][img.getHeight()];
-		for (int i = 0; i < img.getWidth(); i++) 
+		int[][] tmpFill = new int[imgWidth][imgHeight];
+		for (int i = 0; i < imgWidth; i++) 
         {			
-            for (int j = 0; j < img.getHeight(); j++) 
+            for (int j = 0; j < imgHeight; j++) 
             { 
             	
             	currentPixel = pixelVals[i][j];           	
@@ -110,9 +130,9 @@ public class Pallettization
 				tmpRGB = 0;
 				length = 0;
 				tmpArray = categories.get(keys[index]);
-				for (int i = 0; i < img.getWidth(); i++) 
+				for (int i = 0; i < imgWidth; i++) 
 		        {			
-		            for (int j = 0; j < img.getHeight(); j++) 
+		            for (int j = 0; j < imgHeight; j++) 
 		            { 
 		            	if(pixelVals[i][j] == (int) keys[index])
 		            	{
@@ -132,26 +152,13 @@ public class Pallettization
 				index++;
 			}
 			
-			img = getPalette(img, keys, passes);
+			pixelVals = getPalette(pixelVals,keys, passes);
 		}
-
-		//set pixels to ending value
-		else
-		{
-			for (int i = 0; i < img.getWidth(); i++) 
-	        {			
-	            for (int j = 0; j < img.getHeight(); j++) 
-	            { 
-	            	img.setRGB(i, j, pixelVals[i][j]);            	
-	            }
-	        } 
-		}
-
-		
-		return img;
+	
+		return pixelVals;
 	}
 	
-	private HashMap<Integer, int[][]> getRandomVals(BufferedImage img, HashMap<Integer, int[][]> categories) 
+	private HashMap<Integer, int[][]> getRandomVals(int[][] pixelVals, HashMap<Integer, int[][]> categories) 
 	{
 		int q = 0;
 		int containsCount = 0;
@@ -159,12 +166,12 @@ public class Pallettization
 		while(q  < k && containsCount < 100)
 		{
 
-			int randNumX = rand.nextInt(img.getWidth());
-			int randNumY = rand.nextInt(img.getHeight());
-			int randPixelVal = img.getRGB(randNumX, randNumY);
+			int randNumX = rand.nextInt(imgWidth);
+			int randNumY = rand.nextInt(imgHeight);
+			int randPixelVal = pixelVals[randNumX][randNumY];
 			if(!categories.containsKey(randPixelVal))
 			{
-				categories.put(randPixelVal, new int[img.getWidth()][img.getHeight()]);
+				categories.put(randPixelVal, new int[imgWidth][imgHeight]);
 				q++;
 			}	
 			
@@ -232,4 +239,37 @@ public class Pallettization
 		
 		return pixelVals;
     }
+	
+	private BufferedImage arrayToImage(int[][] pixelVals)
+	{
+
+		BufferedImage img = new BufferedImage(imgWidth,imgHeight, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < imgWidth; i++) 
+        {			
+            for (int j = 0; j < imgHeight; j++) 
+            { 
+            	img.setRGB(i, j, pixelVals[i][j]);            	
+            }
+        } 
+		return img;
+	}
+	
+	private int[][] putImagesIntoArray(BufferedImage[] images)
+	{
+		int[][] imageArray = new int[imgWidth * images.length][imgWidth * images.length];
+		List list = new ArrayList(Arrays.asList(imageArray));
+		for(BufferedImage img : images)
+		{
+			list.addAll(Arrays.asList(convertAllVals(img)));
+		}
+		
+		imageArray = (int[][]) list.toArray();
+		
+		return imageArray;
+	}
+	
+	private BufferedImage splitArrayToImage(int[][] images)
+	{
+		
+	}
 }
