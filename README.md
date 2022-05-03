@@ -3,7 +3,9 @@
 4/13/22
 ------------------
 -  Java Program that turns real images into cartoon ones
--  -Supports video filtering
+-  -Supports Image Filtering
+-  -Supports Video Filtering
+-  -Supports Condor Distributed Processing
 - steps:
 -   -GrayScale
 -   -GaussianBlur
@@ -17,6 +19,10 @@
 -   Pallettization:
 -   -K-means clustering
 - Combine both images to create the final result
+- *Scripts*
+- -Split videos into batches
+- -Create Condor Job file
+- -Merge Audio/video
 
 - Before:
 ![duck](https://user-images.githubusercontent.com/62959991/163188929-a5bba28f-6e2b-4eac-a600-b2bfa0b66c6d.png)
