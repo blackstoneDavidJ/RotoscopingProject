@@ -36,3 +36,10 @@
 - After:
 ![applesComplete](https://user-images.githubusercontent.com/62959991/163189475-054b2e1f-f45a-4645-946d-747ecf6a4800.png)
 
+- More Examples:
+![dials_canny](https://user-images.githubusercontent.com/62959991/166494487-b2455541-5c58-4332-9f27-67ea5684bca1.png)
+![parachute_canny](https://user-images.githubusercontent.com/62959991/166494517-ee85b989-4eb8-4629-acb4-8f7d4ef2e351.png)
+![city_canny](https://user-images.githubusercontent.com/62959991/166494541-52ca1a83-5753-416e-9096-2959c1689da7.png)
+![lizard_canny](https://user-images.githubusercontent.com/62959991/166494552-3d44f9b5-d237-4ea2-bb64-132700af18ea.png)
+
+
